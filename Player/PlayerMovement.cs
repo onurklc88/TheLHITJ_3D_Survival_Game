@@ -16,6 +16,9 @@ public class PlayerMovement : MonoBehaviour
     private bool isCrouching;
     private bool isRaycast;
     private bool cro;
+   
+
+    
 
     //float
     private float distance = 0.4f;   
@@ -26,18 +29,24 @@ public class PlayerMovement : MonoBehaviour
     private float crouchHeight = 1f;
     private float crouchSpeed = 40f;
 
-    //speed
-    [SerializeField] private float speed = 3f;
-    [SerializeField] private float crouchsSpeed = 1f;
-    [SerializeField] private float runSpeed = 6f;
+    //movement
+    private float hori;
+    private float vert;
+    
 
+    //speed
+    public float speed = 3f;
+    public float crouchsSpeed = 1f;
+    public float runSpeed = 6f;
+    public float idleSpeed = 0f;
+    
 
 
 
     //                ********SERIALIZE FIELD*********
     [SerializeField] private Transform ground;
     [SerializeField] private LayerMask mask;
-
+ 
   
 
 
@@ -54,7 +63,7 @@ public class PlayerMovement : MonoBehaviour
 
         //is player touch the ground
         isGrounded = Physics.CheckSphere(ground.position, distance, mask);
-
+        
 
 
         //Functions
@@ -73,11 +82,11 @@ public class PlayerMovement : MonoBehaviour
     private void Movement()
     {
         //Player Movement Input
-        float Hori = Input.GetAxis("Horizontal");
-        float Vert = Input.GetAxis("Vertical");
+        hori = Input.GetAxis("Horizontal");
+        vert = Input.GetAxis("Vertical");
 
         //Player Move
-        Vector3 move = transform.right * Hori + transform.forward * Vert;
+        Vector3 move = transform.right * hori + transform.forward * vert;
         controller.Move(move * speed * Time.deltaTime);
        
 
@@ -115,13 +124,16 @@ public class PlayerMovement : MonoBehaviour
             CharacterHeight(crouchHeight);
             if(controller.height - 0.05f <= crouchHeight)
             {               
-                controller.height = crouchHeight;   
+                controller.height = crouchHeight;
+               
+
             }
         }
         else
         {
             if(controller.height < normalHeight && isRaycast == false)
             {
+                
                 float lastHeight = controller.height;
                 
                 CharacterHeight(normalHeight);
@@ -162,7 +174,7 @@ public class PlayerMovement : MonoBehaviour
     private void Run()
     {
         //run speed
-        if (Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.LeftControl))
+        if (Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.W))
         {
             speed = runSpeed;
         }
@@ -177,6 +189,10 @@ public class PlayerMovement : MonoBehaviour
         else if (controller.height < 1.7f)
         {
             speed = crouchsSpeed;
+        }
+        else if (hori == 0 && vert == 0)
+        {
+            speed = idleSpeed;
         }
         //normal speed
         else
