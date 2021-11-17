@@ -6,8 +6,8 @@ public class axeScript : MonoBehaviour
 {
 
     private IEnumerator coroutine;
-
-
+    public ParticleSystem chopEffect;
+    public ParticleSystem bloodEffect;
 
 
     void Start()
@@ -24,19 +24,45 @@ public class axeScript : MonoBehaviour
     }
 
 
+    
+
+
+    private void OnTriggerEnter(Collider tree)
+    {
+        //effect = true;
+        if(tree.gameObject.tag == "tree"){
+
+            //chopEffect.Play();
+            //effect = false;
+            StartCoroutine(asdsad());
+        }
+
+        if(tree.gameObject.tag == "animal")
+        {
+
+
+            bloodEffect.Play();
+
+        }
+
+
+
+
+    }
+
     public void colliderTrigger()
     {
 
         if (Input.GetMouseButtonDown(0))
         {
-            StartCoroutine(asddsa());
-            Debug.Log("açtý");
+            StartCoroutine(chopCollider());
+         
             GetComponent<Collider>().enabled = true;
 
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            StartCoroutine(asddsa());
+            StartCoroutine(chopCollider());
             
 
 
@@ -46,14 +72,27 @@ public class axeScript : MonoBehaviour
 
     }
 
-   private IEnumerator asddsa()
+   private IEnumerator chopCollider()
     {
 
         
         
             yield return new WaitForSeconds(.8f);
-        Debug.Log("çýktý");
+        
         GetComponent<Collider>().enabled = false;
+
+
+    }
+
+
+    private IEnumerator asdsad()
+    {
+
+
+
+        yield return new WaitForSeconds(.8f);
+
+        chopEffect.Play();
 
 
     }
