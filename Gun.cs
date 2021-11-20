@@ -11,12 +11,23 @@ public class Gun : MonoBehaviour
     public ParticleSystem muzzleFlash;
     public GameObject impactEfectAnimal;
     public GameObject impactEffectWorld;
+    public GameObject player;
+
 
     private bool canShoot;
+    private Animator pistolAnim;
 
-   
 
-    // Update is called once per frame
+    private void Start()
+    {
+       
+        pistolAnim = player.GetComponent<Animator>();
+    }
+
+
+
+
+
     void Update()
     {
         FireInput();
@@ -35,6 +46,7 @@ public class Gun : MonoBehaviour
             {
                 
                 Shoot();
+                
                 canShoot = true;
                 StartCoroutine(timeBetweenShots());
             }
@@ -96,8 +108,9 @@ void Shoot()
     {
         //waiting until destroying tree
 
-
+        pistolAnim.SetTrigger("pistolShooting");
         yield return new WaitForSeconds(0.3f);
+        
         canShoot = false;
 
     }
