@@ -10,6 +10,7 @@ public class Gun : MonoBehaviour
     public float reloadTime = 60f;
     public int maxAmmo = 6;
     public int magazineSize = 12;
+
    
     public Camera fpsCam;
     public ParticleSystem muzzleFlash;
@@ -18,11 +19,12 @@ public class Gun : MonoBehaviour
     public GameObject player;
     public TextMeshProUGUI ammoInfoText;
 
-    [HideInInspector] public bool canShoot = true;
-    [HideInInspector] public int currentAmmo;
+    public bool canShoot = true;
+    [HideInInspector]public int currentAmmo;
 
-
+    private bool manuelReload = false;
     private bool isReloading = false;
+    private int bulletRemainder;
     private Animator pistolAnim;
 
 
@@ -36,17 +38,17 @@ public class Gun : MonoBehaviour
 
     void Update()
     {
-        FireInput();
+        inputManager();
         pistolReload();
         ammoInfoText.text = this.currentAmmo + " / " + this.magazineSize;
     }
 
 
-    public void FireInput()
+    public void inputManager()
     {
 
        
-
+        //shoot Input
         if (Input.GetMouseButtonDown(0))
         {
        
@@ -54,7 +56,6 @@ public class Gun : MonoBehaviour
             {
                 
                 Shoot();
-
                 canShoot = false;
                 StartCoroutine(timeBetweenShots());
             }
@@ -62,6 +63,50 @@ public class Gun : MonoBehaviour
            
 
         }
+
+        //Manuel reload Input
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            
+            manuelReload = true;
+
+            if (manuelReload == true)
+            {
+                
+                if (isReloading == false && currentAmmo > 0 && currentAmmo < maxAmmo && magazineSize > 0)
+                {
+                    
+                    bulletRemainder = maxAmmo - currentAmmo;
+                    
+                    if(bulletRemainder < magazineSize)
+                    {
+                        currentAmmo = maxAmmo;
+                        Debug.Log("girdi");
+                        magazineSize = magazineSize - bulletRemainder;
+
+                    }
+                    else
+                    {
+                        
+                        
+                        currentAmmo = magazineSize + currentAmmo;
+                        magazineSize = 0;
+                        
+
+                    }
+              
+                    StartCoroutine(Reload());
+                    return;
+
+                }
+            
+
+            }
+          
+
+        }
+
+
      
     }
 
@@ -74,7 +119,7 @@ public void Shoot()
       if(canShoot == true)
         {
             currentAmmo--;
-
+            
             muzzleFlash.Play();
         //define raycast
         RaycastHit hit;
@@ -135,12 +180,7 @@ public void Shoot()
             return;
 
         }
-        else if(currentAmmo > 0 || magazineSize > 0)
-        {
-
-            canShoot = true;
-
-        }
+        
        if(currentAmmo == 0 && isReloading == false)
         {
             StartCoroutine(Reload());
@@ -155,8 +195,10 @@ public void Shoot()
 
    IEnumerator Reload()
     {
-
-
+        //if manuel reload is off,auto reload  is enable
+       if(manuelReload == false)
+        {
+ 
         if (magazineSize >= maxAmmo)
         {
 
@@ -171,12 +213,14 @@ public void Shoot()
 
         }
 
+        }
+
         isReloading = true;
         pistolAnim.SetBool("pistolReload", true);
         yield return new WaitForSeconds(reloadTime);
         pistolAnim.SetBool("pistolReload", false);
          isReloading = false;
-
+        manuelReload = false;
     }
 
 
@@ -185,15 +229,11 @@ public void Shoot()
     private IEnumerator timeBetweenShots()
     {
        
-        //waiting until
-      
-        
-            pistolAnim.SetTrigger("pistolShooting");
-
-       
-       
+        //wait between shots
+        pistolAnim.SetTrigger("pistolShooting");
         yield return new WaitForSeconds(0.3f);
         canShoot = true;
+     
 
 
 
