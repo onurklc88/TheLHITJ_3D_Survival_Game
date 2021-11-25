@@ -8,7 +8,7 @@ public class AIAttack : MonoBehaviour
     public NavMeshAgent agent;
     public Transform player;
     public LayerMask whatIsGround, whatIsPlayer;
-    private Animator animation; 
+    public Transform pointOfView;
 
     //agent speed
     public float WalkingSpeed;
@@ -26,12 +26,15 @@ public class AIAttack : MonoBehaviour
     bool alreadyAttacked;
 
     //states
-    public float sightRange, attackRange;
+    public float sightRange;
+    public float attackRange;
+    public float viewRange;
     public bool playerInsightRange, PlayerInAttcakRange;
+    public bool animalPointOfView;
+    //animation
+    private Animator animation;
 
 
-    
-   
 
 
 
@@ -56,9 +59,11 @@ public class AIAttack : MonoBehaviour
         agent.speed = WalkingSpeed;
         agent.speed = RunSpeed;
 
-        //
+        //setting sigth and attack range
         playerInsightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         PlayerInAttcakRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
+        animalPointOfView = Physics.CheckSphere(pointOfView.transform.position, viewRange, whatIsPlayer);
+       
 
         if (!playerInsightRange && !PlayerInAttcakRange)
         {
@@ -74,7 +79,12 @@ public class AIAttack : MonoBehaviour
         {
             AttackPlayer();
         }
+        if(animalPointOfView && !PlayerInAttcakRange)
+        {
 
+            ChasePlayer();
+
+        }
 
 
     }
@@ -175,6 +185,8 @@ public class AIAttack : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, attackRange);
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, sightRange);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(pointOfView.transform.position, viewRange);
     }
 
 
