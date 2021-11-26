@@ -16,9 +16,12 @@ public class PlayerMovement : MonoBehaviour
     private bool isCrouching;
     private bool isRaycast;
     private bool cro;
-   
 
-    
+    //örnek acildi
+    public GameObject GunScript;
+    public GameObject shotgunScript;
+    private shotgunScript asd;
+    private Gun gunsScript;
 
     //float
     private float distance = 0.4f;   
@@ -54,8 +57,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        
         controller = GetComponent<CharacterController>();
-       
+        gunsScript = GunScript.GetComponent<Gun>();
+        asd = shotgunScript.GetComponent<shotgunScript>();
     }
 
     private void Update()
@@ -72,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
         Gravity();
         Crouch();
         Run();
-        Raycastci();
+        crouchUpRaycast();
 
     }
 
@@ -149,8 +154,22 @@ public class PlayerMovement : MonoBehaviour
 
 
     }
+    //örnek acildi silenecek
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.tag == "deneme"){
 
-    private void Raycastci()
+            //gunsScript.currentAmmo = gunsScript.maxAmmo;
+            gunsScript.looting = true;
+            gunsScript.magazineSize = gunsScript.maxAmmo + gunsScript.magazineSize;
+            //asd.magazineSize = asd.maxAmmo + asd.magazineSize;
+            Debug.Log("ammo güncellendi");
+            
+         
+        }
+    }
+
+    private void crouchUpRaycast()
     {
         //this function control is there any object above you
         RaycastHit hit;
