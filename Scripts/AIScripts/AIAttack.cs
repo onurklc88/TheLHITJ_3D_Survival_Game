@@ -5,6 +5,8 @@ using UnityEngine.AI;
 public class AIAttack : MonoBehaviour
 {
 
+
+    public GameObject stealthSpeed;
     public NavMeshAgent agent;
     public Transform player;
     public LayerMask whatIsGround, whatIsPlayer;
@@ -33,6 +35,8 @@ public class AIAttack : MonoBehaviour
     public bool animalPointOfView;
     //animation
     private Animator animation;
+    private PlayerMovement playerMovementScript;
+
 
 
 
@@ -44,6 +48,9 @@ public class AIAttack : MonoBehaviour
         animation = GetComponent<Animator>();
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
+        playerMovementScript = stealthSpeed.GetComponent<PlayerMovement>();
+
+
     }
 
 
@@ -63,33 +70,54 @@ public class AIAttack : MonoBehaviour
         playerInsightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         PlayerInAttcakRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
         animalPointOfView = Physics.CheckSphere(pointOfView.transform.position, viewRange, whatIsPlayer);
-       
-
-        if (!playerInsightRange && !PlayerInAttcakRange)
-        {
-
-            Patrolling();
-        }
-        if (playerInsightRange && !PlayerInAttcakRange)
-        {
-
-            ChasePlayer();
-        }
-        if (PlayerInAttcakRange && playerInsightRange)
-        {
-            AttackPlayer();
-        }
-        if(animalPointOfView && !PlayerInAttcakRange)
-        {
-
-            ChasePlayer();
-
-        }
-
+        AIStates();
 
     }
 
+    public void AIStates()
+    {
+        //if AI doesnt look to enemy then patrolling
+        if (!PlayerInAttcakRange && !animalPointOfView)
+        {
+               Patrolling();
 
+        }
+
+        //is player playing stealth 
+        if (playerInsightRange && playerMovementScript.speed == 1)
+        {
+
+            Patrolling();
+
+        }
+        else if(playerInsightRange && playerMovementScript.speed != 1)
+        {
+
+            ChasePlayer();
+
+        }
+
+        if (animalPointOfView && !PlayerInAttcakRange)
+        {
+             ChasePlayer();
+        }
+        if (PlayerInAttcakRange && playerInsightRange && pointOfView)
+        {
+            AttackPlayer();
+        }
+        if (animalPointOfView && !PlayerInAttcakRange)
+        {
+
+            ChasePlayer();
+
+        }
+
+
+
+
+
+
+    }
 
     private void Patrolling()
     {
