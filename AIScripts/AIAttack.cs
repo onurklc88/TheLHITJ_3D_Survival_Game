@@ -11,16 +11,18 @@ public class AIAttack : MonoBehaviour
     public Transform player;
     public LayerMask whatIsGround, whatIsPlayer;
     public Transform pointOfView;
-
+    private PlayerMovement playerMovementScript;
     //agent speed
     public float WalkingSpeed;
     public float RunSpeed;
-
+   
 
     //Patroling
     public Vector3 walkPoint;
     bool walkPointSet;
     public float walkPointRange;
+    
+    
 
 
     //Attack
@@ -35,7 +37,11 @@ public class AIAttack : MonoBehaviour
     public bool animalPointOfView;
     //animation
     private Animator animation;
-    private PlayerMovement playerMovementScript;
+    public float patrolTime = 10f;
+    public float breakTime = 10f;
+    private float currentPatrolTime = 0;
+    private float currentBreakTime = 0;
+    
 
 
 
@@ -56,7 +62,8 @@ public class AIAttack : MonoBehaviour
 
     void Start()
     {
-        
+        currentPatrolTime = patrolTime;
+      
     }
 
     
@@ -71,7 +78,8 @@ public class AIAttack : MonoBehaviour
         PlayerInAttcakRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
         animalPointOfView = Physics.CheckSphere(pointOfView.transform.position, viewRange, whatIsPlayer);
         AIStates();
-
+        Dead();
+        updateAnimation();
     }
 
     public void AIStates()
@@ -112,6 +120,53 @@ public class AIAttack : MonoBehaviour
 
         }
 
+    }
+
+
+    private void updateAnimation()
+    {
+       
+        //patrol
+        if (!PlayerInAttcakRange && !animalPointOfView && currentBreakTime <= 0 || playerInsightRange && playerMovementScript.speed == 1 & currentBreakTime <= 0)
+        {
+            currentPatrolTime -= 1 * Time.deltaTime;
+            animation.SetBool("chase", false);
+            animation.SetFloat("patrolTime", currentPatrolTime);
+            if(currentPatrolTime <= 0)
+            {
+                currentBreakTime = breakTime;
+
+            }
+
+        }
+
+       if(!PlayerInAttcakRange && !animalPointOfView && currentPatrolTime <= 0 || playerInsightRange && playerMovementScript.speed == 1 & currentPatrolTime <= 0)
+        {
+            currentBreakTime -= 1 * Time.deltaTime;
+            animation.SetBool("chase", false);
+            animation.SetFloat("breakTime", currentBreakTime);
+            agent.speed = 0;
+            
+            if(playerInsightRange && playerMovementScript.speed != 1)
+            {
+                currentBreakTime = 0;
+                agent.speed = RunSpeed;
+                animation.SetBool("chase", true);
+               
+              }
+
+
+            if (currentBreakTime <= 0)
+            {
+                agent.speed = WalkingSpeed;
+                currentPatrolTime = patrolTime;
+
+               }
+
+          
+
+
+        }
 
 
 
@@ -119,22 +174,24 @@ public class AIAttack : MonoBehaviour
 
     }
 
+
     private void Patrolling()
     {
 
         if (!walkPointSet)
         {
-              SearchWalkPoint();
+           
+                SearchWalkPoint();
+            
         }
 
         if (walkPointSet)
         {
-            animation.SetBool("Walk", true);
-            animation.SetBool("Chase", false);
-            animation.SetBool("Attack", false);
-            agent.speed = WalkingSpeed;
-            agent.SetDestination(walkPoint);
-
+            if (agent.speed != 0)
+            {
+                agent.speed = WalkingSpeed;
+                agent.SetDestination(walkPoint);
+            }
 
         }
             
@@ -155,24 +212,27 @@ public class AIAttack : MonoBehaviour
         float randomX = Random.Range(-walkPointRange, walkPointRange);
 
         walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
-
-        if (Physics.Raycast(walkPoint, -transform.up, 2f, whatIsGround))
-        {
-            walkPointSet = true;
-            
-
-        }
+       
+           if (Physics.Raycast(walkPoint, -transform.up, 2f, whatIsGround))
+            {
+                walkPointSet = true;
+            }
+        
+      
      
        
+
+
+
     }
 
 
 
     private void ChasePlayer()
     {
-        animation.SetBool("Walk", false);
-        animation.SetBool("Chase", true);
-        animation.SetBool("Attack", false);
+        animation.SetBool("attack", false);
+        animation.SetBool("chase", true);
+        
         agent.speed = RunSpeed;
         agent.SetDestination(player.position);
 
@@ -180,8 +240,8 @@ public class AIAttack : MonoBehaviour
     }
     private void AttackPlayer()
     {
-        animation.SetBool("Chase", false);
-        animation.SetBool("Attack", true);
+        animation.SetBool("attack", true);
+        animation.SetBool("chase", false);
         agent.SetDestination(transform.position);
         transform.LookAt(player.position);
 
@@ -206,6 +266,22 @@ public class AIAttack : MonoBehaviour
         alreadyAttacked = false;
 
     }
+    private void Dead()
+    {
+        //if AI is dead it speed is
+        AIHealth health = GetComponent<AIHealth>();
+        if (health.AIHealth1 <= 0)
+        {
+            Debug.Log("Advance aý dead");
+            agent.speed = 0;
+            Destroy(gameObject, 3f);
+        }
+
+
+
+    }
+
+
 
     private void OnDrawGizmosSelected()
     {
