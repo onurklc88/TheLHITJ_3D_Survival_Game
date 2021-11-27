@@ -7,8 +7,8 @@ public class AIHealth : MonoBehaviour
 
     public float AIHealth1 = 100f;
     public float AxeDamage = 0;
-    public float BulletDamage = 0;
-    public float counter = 0.1f;
+   
+    private float counter = 0.1f;
 
 
     public GameObject Animal;
@@ -37,7 +37,7 @@ public class AIHealth : MonoBehaviour
     void Start()
     {
         
-        AISpeed = Animal.GetComponent<AIPatrolling>();
+       
      
       
     }
@@ -58,29 +58,33 @@ public class AIHealth : MonoBehaviour
 
 
         //if AI touch with axe
-        if (TakeDamage.gameObject.tag == "axe")
+        if (TakeDamage.gameObject.tag == "Axe")
         {
             //AI taking axe damage
             AIHealth1 -= AxeDamage;
-
-
-            Debug.Log(AIHealth1);
+             Debug.Log(AIHealth1);
 
         }
-        //if AI touch with bullet
-        if (TakeDamage.gameObject.tag == "bullet")
-        {
-            //AI taking bullet damage
-            AIHealth1 -= BulletDamage;
+       
 
+
+
+    }
+    //taking damage by guns
+   public void TakeDamage (float amount)
+    {
+
+        AIHealth1 -= amount;
+        if(AIHealth1 <= 0f)
+        {
+           
+            Death();
 
         }
 
 
 
     }
-
-   
 
 
 
@@ -89,18 +93,9 @@ public class AIHealth : MonoBehaviour
     {
         Dead = false;
 
-        if (AIHealth1 == 0)
+        if (AIHealth1 <= 0)
         {
-            //calling Death animation
-            anima.SetBool("isDead", true);
-
-            //set AI speed 0
-            AISpeed.speed = 0f;
-
-            //destroy
-            Destroy(gameObject, 1f);
-
-
+           
             Dead = true;
         }
 
