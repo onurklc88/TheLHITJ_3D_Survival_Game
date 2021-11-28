@@ -7,7 +7,8 @@ public class TreeScript : MonoBehaviour
     public GameObject thisTree;
     public int treeHealth;
     public int axeDamage;
-   public int counter;
+    private Rigidbody rb;
+    private int counter;
 
 
     [SerializeField]
@@ -17,7 +18,7 @@ public class TreeScript : MonoBehaviour
     private GameObject[] insantanciatedObects;
 
 
-
+    
     private bool isFallen = false;
 
 
@@ -25,7 +26,11 @@ public class TreeScript : MonoBehaviour
 
     void Start()
     {
+        rb = thisTree.GetComponent<Rigidbody>();
 
+        //freeze rigidbody constraints for spawning tree
+        rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezeRotationX;
+       
         thisTree = transform.gameObject;
 
     }
@@ -46,12 +51,13 @@ public class TreeScript : MonoBehaviour
 
         if (treeHealth <= 0 && isFallen == false)
         {
-            //calling rigidbody to falling
-            Rigidbody rb = thisTree.AddComponent<Rigidbody>();
+           
 
-            //setting RB 
-            rb.isKinematic = false;
-            rb.useGravity = true;
+            rb.constraints = RigidbodyConstraints.None;
+            
+           
+           
+            rb.mass = 5f;
             //adding force to pushing rb
             rb.AddForce(Vector3.forward, ForceMode.Impulse);
            StartCoroutine(destroyTree());
@@ -64,7 +70,7 @@ public class TreeScript : MonoBehaviour
 
     
 
-
+    
     private void OnTriggerEnter(Collider health)
     {
 
@@ -79,14 +85,14 @@ public class TreeScript : MonoBehaviour
         }
 
     }
-
+    
     public void ItemDrop()
     {
 
         //Drop the item until counter become a zero
         if (isFallen == true && counter > 0)
         {
-            Debug.Log("sas");
+           
             //Storing the items from inspector inside of instanciate object
             insantanciatedObects = new GameObject[ItemsDeck.Length];
 
