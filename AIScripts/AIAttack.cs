@@ -22,8 +22,6 @@ public class AIAttack : MonoBehaviour
     bool walkPointSet;
     public float walkPointRange;
     
-    
-
 
     //Attack
     public float timeBetweenAttacks;
@@ -39,10 +37,12 @@ public class AIAttack : MonoBehaviour
     private Animator animation;
     public float patrolTime = 10f;
     public float breakTime = 10f;
+    public float deadAnimTime;
     private float currentPatrolTime = 0;
     private float currentBreakTime = 0;
-    
+   
 
+  
 
 
 
@@ -55,7 +55,7 @@ public class AIAttack : MonoBehaviour
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         playerMovementScript = stealthSpeed.GetComponent<PlayerMovement>();
-
+       
 
     }
 
@@ -63,7 +63,8 @@ public class AIAttack : MonoBehaviour
     void Start()
     {
         currentPatrolTime = patrolTime;
-      
+        
+        
     }
 
     
@@ -91,7 +92,7 @@ public class AIAttack : MonoBehaviour
 
         }
 
-        //is player playing stealth 
+        //if player approach quietly to animal
         if (playerInsightRange && playerMovementScript.speed == 1)
         {
 
@@ -115,10 +116,27 @@ public class AIAttack : MonoBehaviour
         }
         if (animalPointOfView && !PlayerInAttcakRange)
         {
-
-            ChasePlayer();
+          ChasePlayer();
 
         }
+
+        //if AI hit by any gun its starting to attack
+        AIHealth AIhealth = GetComponent<AIHealth>();
+        if (!PlayerInAttcakRange && !animalPointOfView && AIhealth.hit == true)
+        {
+            
+            ChasePlayer();
+         }
+
+        if (PlayerInAttcakRange && AIhealth.hit == true)
+        {
+           
+            AttackPlayer();
+            AIhealth.hit = false;
+        }
+
+
+
 
     }
 
@@ -163,13 +181,11 @@ public class AIAttack : MonoBehaviour
 
                }
 
-          
+           
+
 
 
         }
-
-
-
 
 
     }
@@ -187,11 +203,10 @@ public class AIAttack : MonoBehaviour
 
         if (walkPointSet)
         {
-            if (agent.speed != 0)
-            {
+            
                 agent.speed = WalkingSpeed;
                 agent.SetDestination(walkPoint);
-            }
+            
 
         }
             
@@ -218,12 +233,7 @@ public class AIAttack : MonoBehaviour
                 walkPointSet = true;
             }
         
-      
-     
-       
-
-
-
+   
     }
 
 
@@ -248,10 +258,6 @@ public class AIAttack : MonoBehaviour
         if (!alreadyAttacked)
         {
 
-          
-            Debug.Log("hit");
-
-            
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
 
@@ -262,7 +268,7 @@ public class AIAttack : MonoBehaviour
     }
     private void ResetAttack()
     {
-        animation.SetBool("Attack", false);
+        animation.SetBool("attack", false);
         alreadyAttacked = false;
 
     }
@@ -270,18 +276,17 @@ public class AIAttack : MonoBehaviour
     {
         //if AI is dead it speed is
         AIHealth health = GetComponent<AIHealth>();
+       
         if (health.AIHealth1 <= 0)
         {
-            Debug.Log("Advance aý dead");
-            agent.speed = 0;
-            Destroy(gameObject, 3f);
+            animation.SetBool("chase", false);
+            animation.SetBool("attack", false);
+            animation.SetBool("dead", true);
+            agent.speed--;
+            Destroy(gameObject, deadAnimTime);
         }
-
-
-
+        
     }
-
-
 
     private void OnDrawGizmosSelected()
     {
