@@ -26,6 +26,7 @@ public class AIAttack : MonoBehaviour
     //Attack
     public float timeBetweenAttacks;
     bool alreadyAttacked;
+    public float hitRange = 4f;
 
     //states
     public float sightRange;
@@ -253,10 +254,18 @@ public class AIAttack : MonoBehaviour
         animation.SetBool("attack", true);
         animation.SetBool("chase", false);
         agent.SetDestination(transform.position);
-        transform.LookAt(player.position);
+        //transform.LookAt(player.position);
 
         if (!alreadyAttacked)
         {
+            //attack
+            RaycastHit raycastHit;
+            if (Physics.Raycast(transform.position, transform.forward, out raycastHit, hitRange))
+            {
+
+                Debug.Log(raycastHit.transform.name);
+
+            }
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
@@ -282,10 +291,30 @@ public class AIAttack : MonoBehaviour
             animation.SetBool("chase", false);
             animation.SetBool("attack", false);
             animation.SetBool("dead", true);
-            agent.speed--;
+            agent.speed = 0;
             Destroy(gameObject, deadAnimTime);
         }
         
+    }
+    private void nightVision()
+    {
+        //when the darkness coming viewRange decreasing
+        LightingManager daycycle = GetComponent<LightingManager>();
+        if(daycycle.midnight == true)
+        {
+
+            viewRange -= 1; 
+
+        }
+        else if(daycycle.midnight == false)
+        {
+            viewRange += 1;
+
+        }
+
+
+
+
     }
 
     private void OnDrawGizmosSelected()
