@@ -41,7 +41,7 @@ public class AIAttack : MonoBehaviour
     public float deadAnimTime;
     private float currentPatrolTime = 0;
     private float currentBreakTime = 0;
-   
+    private int counter = 1;
 
   
 
@@ -86,7 +86,7 @@ public class AIAttack : MonoBehaviour
 
     public void AIStates()
     {
-        //if AI doesnt look to enemy then patrolling
+        //player is not in range
         if (!PlayerInAttcakRange && !animalPointOfView)
         {
                Patrolling();
@@ -106,11 +106,12 @@ public class AIAttack : MonoBehaviour
             ChasePlayer();
 
         }
-
+        //if animal see player
         if (animalPointOfView && !PlayerInAttcakRange)
         {
              ChasePlayer();
         }
+        //attack range
         if (PlayerInAttcakRange && playerInsightRange && pointOfView)
         {
             AttackPlayer();
@@ -121,14 +122,13 @@ public class AIAttack : MonoBehaviour
 
         }
 
-        //if AI hit by any gun its starting to attack
+        //if AI hit by any gun 
         AIHealth AIhealth = GetComponent<AIHealth>();
         if (!PlayerInAttcakRange && !animalPointOfView && AIhealth.hit == true)
         {
-            
-            ChasePlayer();
+             ChasePlayer();
          }
-
+        
         if (PlayerInAttcakRange && AIhealth.hit == true)
         {
            
@@ -144,28 +144,32 @@ public class AIAttack : MonoBehaviour
 
     private void updateAnimation()
     {
-       
-        //patrol
-        if (!PlayerInAttcakRange && !animalPointOfView && currentBreakTime <= 0 || playerInsightRange && playerMovementScript.speed == 1 & currentBreakTime <= 0)
+        AIHealth AIhealth = GetComponent<AIHealth>();
+        //patrol state animation
+         if (!PlayerInAttcakRange && !animalPointOfView && currentBreakTime <= 0 || playerInsightRange && playerMovementScript.speed == 1 & currentBreakTime <= 0)
         {
             currentPatrolTime -= 1 * Time.deltaTime;
-            animation.SetBool("chase", false);
             animation.SetFloat("patrolTime", currentPatrolTime);
+
             if(currentPatrolTime <= 0)
             {
                 currentBreakTime = breakTime;
 
             }
+                 }
 
-        }
-
+        //breakTime animation
        if(!PlayerInAttcakRange && !animalPointOfView && currentPatrolTime <= 0 || playerInsightRange && playerMovementScript.speed == 1 & currentPatrolTime <= 0)
         {
             currentBreakTime -= 1 * Time.deltaTime;
-            animation.SetBool("chase", false);
             animation.SetFloat("breakTime", currentBreakTime);
-            agent.speed = 0;
-            
+            if (AIhealth.hit != true)
+            {
+
+                agent.speed = 0;
+
+            }
+         //if player is not hiding
             if(playerInsightRange && playerMovementScript.speed != 1)
             {
                 currentBreakTime = 0;
@@ -173,35 +177,29 @@ public class AIAttack : MonoBehaviour
                 animation.SetBool("chase", true);
                
               }
-
-
-            if (currentBreakTime <= 0)
-            {
+            
+              if (currentBreakTime <= 0)
+               {
                 agent.speed = WalkingSpeed;
                 currentPatrolTime = patrolTime;
 
                }
+                 }
 
-           
-
-
-
-        }
-
-
+       
     }
 
-
+   
     private void Patrolling()
     {
-
+        //if walk point is not set search for walk point
         if (!walkPointSet)
         {
            
                 SearchWalkPoint();
             
         }
-
+        //if walk point is set, aý able to patrol
         if (walkPointSet)
         {
             
@@ -241,6 +239,7 @@ public class AIAttack : MonoBehaviour
 
     private void ChasePlayer()
     {
+        
         animation.SetBool("attack", false);
         animation.SetBool("chase", true);
         
