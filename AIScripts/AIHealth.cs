@@ -5,13 +5,10 @@ using UnityEngine;
 public class AIHealth : MonoBehaviour
 {
 
-    public float AIHealth1 = 100f;
+    public float AIHealth1;
     public float AxeDamage = 0;
-   
     private float counter = 0.1f;
-
-
-    public GameObject Animal;
+    private float deadcounter = 0.1f;
 
     [SerializeField]
     //I put the items to store inside of what we want instanciate 
@@ -19,29 +16,13 @@ public class AIHealth : MonoBehaviour
     //Then I will fetch these objects from ýtemsDeck
     private GameObject[] insantanciatedObects;
 
+    [HideInInspector] public bool hit;
+    [HideInInspector] public bool Dead;
 
-
-    
-    public bool Dead;
-    private Animator anima;
-    private AIPatrolling AISpeed;
-
-    private void Awake()
+    private void Start()
     {
-
-        anima = GetComponent<Animator>();
-        
-    }
-
-
-    void Start()
-    {
-        
        
-     
-      
     }
-
 
     void Update()
     {
@@ -75,6 +56,7 @@ public class AIHealth : MonoBehaviour
     {
 
         AIHealth1 -= amount;
+        hit = true;
         if(AIHealth1 <= 0f)
         {
            
@@ -92,10 +74,23 @@ public class AIHealth : MonoBehaviour
    public void Death()
     {
         Dead = false;
-
+        
         if (AIHealth1 <= 0)
         {
-           
+
+            if(gameObject.tag == "deer" && deadcounter > 0)
+            {
+                
+                GameObject.Find("AIStartSpawner").GetComponent<AIController>().numberOfDeer -= 1;
+                deadcounter--;
+            }
+            if (gameObject.tag == "rabbit" && deadcounter > 0)
+            {
+
+                GameObject.Find("AIStartSpawner").GetComponent<AIController>().numberOfRabbit -= 1;
+                deadcounter--;
+            }
+
             Dead = true;
         }
 
