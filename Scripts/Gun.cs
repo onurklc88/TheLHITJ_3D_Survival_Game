@@ -5,10 +5,10 @@ using TMPro;
 
 public class Gun : MonoBehaviour
 {
-    public float damage = 10f;
+    public float damage = 20f;
     public float range = 100f;
     public float reloadTime = 60f;
-    public int maxAmmo = 6;
+    public int maxAmmo = 2;
     public int magazineSize = 12;
 
    
@@ -19,9 +19,9 @@ public class Gun : MonoBehaviour
     public GameObject player;
     public TextMeshProUGUI ammoInfoText;
 
-    public bool canShoot = true;
+    [HideInInspector]public bool canShoot = true;
     [HideInInspector]public int currentAmmo;
-
+    [HideInInspector]public bool looting = false;
     private bool manuelReload = false;
     private bool isReloading = false;
     private int bulletRemainder;
@@ -40,6 +40,7 @@ public class Gun : MonoBehaviour
     {
         inputManager();
         pistolReload();
+        ammoLooting();
         ammoInfoText.text = this.currentAmmo + " / " + this.magazineSize;
     }
 
@@ -52,6 +53,7 @@ public class Gun : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
        
+
             if(canShoot == true)
             {
                 
@@ -81,7 +83,7 @@ public class Gun : MonoBehaviour
                     if(bulletRemainder < magazineSize)
                     {
                         currentAmmo = maxAmmo;
-                        Debug.Log("girdi");
+                        
                         magazineSize = magazineSize - bulletRemainder;
 
                     }
@@ -94,7 +96,7 @@ public class Gun : MonoBehaviour
                         
 
                     }
-              
+                    bulletRemainder = 0;
                     StartCoroutine(Reload());
                     return;
 
@@ -115,47 +117,43 @@ public class Gun : MonoBehaviour
 public void Shoot()
     {
 
-        
-      if(canShoot == true)
+
+        if (currentAmmo > 0)
         {
             currentAmmo--;
-            
+
             muzzleFlash.Play();
-        //define raycast
-        RaycastHit hit;
-        //using raycast to hit objects
-       if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out hit, range))
-        {
-        
-            Debug.Log(hit.transform.name);
-            
-        }
+            //define raycast
+            RaycastHit hit;
+            //using raycast to hit objects
+            if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out hit, range))
+            {
 
+                Debug.Log(hit.transform.name);
 
+            }
 
-       //if hit object tag is not equal to animal 
-
-      if(hit.transform.tag != "animal")
-        {
-            GameObject impactObect = Instantiate(impactEffectWorld, hit.point, Quaternion.LookRotation(hit.normal));
-            Destroy(impactObect, 2f);
-
-        }
-
-       
-
-
-        //fetching AIHealth script
+       //fetching AIHealth script
         AIHealth target = hit.transform.GetComponent<AIHealth>();
 
         //if AIHealth Script is exist hit the damage
-        if( target != null)
+        if(target != null)
         {
 
             target.TakeDamage(damage);
             GameObject impactGO = Instantiate(impactEfectAnimal, hit.point, Quaternion.LookRotation(hit.normal));
             Destroy(impactGO, 2f);
         }
+            //if AIHealth Script is not exist use sand particle effect
+            if (target == null)
+
+            {
+                 GameObject impactObect = Instantiate(impactEffectWorld, hit.point, Quaternion.LookRotation(hit.normal));
+                    Destroy(impactObect, 2f);
+
+             }
+
+
     }
 
 
@@ -170,14 +168,13 @@ public void Shoot()
             return;
         }
 
-     
+
        
         if (currentAmmo == 0 && magazineSize == 0)
         {
             canShoot = false;
             pistolAnim.SetBool("pistolReload", false);
-          
-            return;
+           return;
 
         }
         
@@ -191,6 +188,21 @@ public void Shoot()
 
     }
 
+    //if player looting or crafting ammo after empty magazine :v
+    private void ammoLooting()
+    {
+        if(looting == true)
+        {
+
+            canShoot = true;
+
+        }
+
+        looting = false;
+
+
+
+    }
 
 
    IEnumerator Reload()
@@ -240,6 +252,5 @@ public void Shoot()
     }
 
 
-
-
+    
 }
