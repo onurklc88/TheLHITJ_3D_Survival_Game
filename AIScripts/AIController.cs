@@ -5,16 +5,28 @@ using UnityEngine;
 public class AIController : MonoBehaviour
 {
     public Transform spawnPosition;
+    public Transform spawnPosition2;
+
     public GameObject deer;
     public GameObject rabbit;
-    
+    public GameObject bear;
+    public GameObject wolf;
+    public GameObject boar;
+
     
     public int maxNumberOfRabbit;
     public int maxNumberOfDeer;
+    public int maxNumberOfBear;
+    public int maxNumberOfWolf;
+    public int maxNumberOfBoar;
 
 
-   public int numberOfDeer = 0;
-   public int numberOfRabbit = 0;
+   [HideInInspector]public int numberOfDeer = 0;
+   [HideInInspector]public int numberOfRabbit = 0;
+   [HideInInspector]public int numberOfBear = 0;
+   [HideInInspector]public int numberOfWolf = 0;
+   [HideInInspector]public int numberOfBoar = 0;
+
 
     private AIHealth AIScript;
     private float xPos;
@@ -66,17 +78,58 @@ public class AIController : MonoBehaviour
             Instantiate(rabbit, new Vector3(xPos, spawnPosition.transform.position.y, zPos), Quaternion.identity);
             yield return new WaitForSeconds(0.1f);
             numberOfRabbit += 1;
+         }
 
+
+        //Bear spawning at start
+        while(numberOfBear < maxNumberOfBear)
+        {
+
+            //giving random x and z axis between spawn point
+            xPos = Random.Range(spawnPosition2.transform.position.x, spawnPosition.transform.position.x + 10f);
+            zPos = Random.Range(spawnPosition2.transform.position.z, spawnPosition.transform.position.z + 30f);
+            //Instantiate AI
+            Instantiate(bear, new Vector3(xPos, spawnPosition2.transform.position.y, zPos), Quaternion.identity);
+            yield return new WaitForSeconds(0.1f);
+            numberOfBear += 1;
+
+            }
+
+        //wolf spawning at start
+        while (numberOfWolf < maxNumberOfWolf)
+        {
+
+            //giving random x and z axis between spawn point
+            xPos = Random.Range(spawnPosition2.transform.position.x, spawnPosition.transform.position.x + 10f);
+            zPos = Random.Range(spawnPosition2.transform.position.z, spawnPosition.transform.position.z + 30f);
+            //Instantiate AI
+            Instantiate(wolf, new Vector3(xPos, spawnPosition2.transform.position.y, zPos), Quaternion.identity);
+            yield return new WaitForSeconds(0.1f);
+            numberOfWolf += 1;
+
+            }
+
+        while (numberOfBoar < maxNumberOfBoar)
+        {
+
+            //giving random x and z axis between spawn point
+            xPos = Random.Range(spawnPosition2.transform.position.x, spawnPosition.transform.position.x + 10f);
+            zPos = Random.Range(spawnPosition2.transform.position.z, spawnPosition.transform.position.z + 30f);
+            //Instantiate AI
+            Instantiate(boar, new Vector3(xPos, spawnPosition2.transform.position.y, zPos), Quaternion.identity);
+            yield return new WaitForSeconds(0.1f);
+            numberOfBoar += 1;
 
         }
-        
+
 
     }
     public void currentNumberOfAI()
     {
-        
-    
-        //if AI killed by player spawn new one
+
+
+        //if AI killed by player after game start spawn new one
+        //deer
         if (numberOfDeer != maxNumberOfDeer)
         {
 
@@ -89,6 +142,7 @@ public class AIController : MonoBehaviour
 
         }
         //if AI killed by player spawn new one
+        //rabbit spawn
         if (numberOfRabbit != maxNumberOfRabbit)
         {
 
@@ -97,10 +151,44 @@ public class AIController : MonoBehaviour
             //Instantiate AI
             Instantiate(rabbit, new Vector3(xPos, spawnPosition.transform.position.y, zPos), Quaternion.identity);
             numberOfRabbit += 1;
+             }
+        
+        //if AI killed by player after game start spawn new one
+        //bear spawn
+        if(numberOfBear != maxNumberOfBear)
+        {
+            xPos = Random.Range(spawnPosition2.transform.position.x, spawnPosition.transform.position.x + 10f);
+            zPos = Random.Range(spawnPosition2.transform.position.z, spawnPosition.transform.position.z + 30f);
+            //Instantiate AI
+            Instantiate(bear, new Vector3(xPos, spawnPosition2.transform.position.y, zPos), Quaternion.identity);
+            numberOfBear += 1;
+            }
+        
+        
+        //if AI killed by player after game start spawn new one
+        //wolf spawn
+        if (numberOfWolf != maxNumberOfWolf)
+        {
+            xPos = Random.Range(spawnPosition2.transform.position.x, spawnPosition.transform.position.x + 10f);
+            zPos = Random.Range(spawnPosition2.transform.position.z, spawnPosition.transform.position.z + 30f);
+            //Instantiate AI
+            Instantiate(wolf, new Vector3(xPos, spawnPosition2.transform.position.y, zPos), Quaternion.identity);
+            numberOfWolf += 1;
+            }
 
+        //boar spawn
+        if (numberOfBoar != maxNumberOfBoar)
+        {
+
+            //giving random x and z axis between spawn point
+            xPos = Random.Range(spawnPosition2.transform.position.x, spawnPosition.transform.position.x + 10f);
+            zPos = Random.Range(spawnPosition2.transform.position.z, spawnPosition.transform.position.z + 30f);
+            //Instantiate AI
+            Instantiate(boar, new Vector3(xPos, spawnPosition2.transform.position.y, zPos), Quaternion.identity);
+            
+            numberOfBoar += 1;
 
         }
-        
 
     }
 
