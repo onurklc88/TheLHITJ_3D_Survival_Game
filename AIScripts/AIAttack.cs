@@ -186,6 +186,12 @@ public class AIAttack : MonoBehaviour
                }
                  }
 
+       if(!playerInsightRange && !animalPointOfView)
+        {
+            animation.SetBool("chase", false);
+
+
+        }
        
     }
 
