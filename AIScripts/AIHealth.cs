@@ -90,7 +90,24 @@ public class AIHealth : MonoBehaviour
                 GameObject.Find("AIStartSpawner").GetComponent<AIController>().numberOfRabbit -= 1;
                 deadcounter--;
             }
+            if (gameObject.tag == "wolf" && deadcounter > 0)
+            {
 
+                GameObject.Find("AIStartSpawner").GetComponent<AIController>().numberOfWolf -= 1;
+                deadcounter--;
+            }
+            if (gameObject.tag == "bear" && deadcounter > 0)
+            {
+
+                GameObject.Find("AIStartSpawner").GetComponent<AIController>().numberOfBear -= 1;
+                deadcounter--;
+            }
+            if (gameObject.tag == "boar" && deadcounter > 0)
+            {
+
+                GameObject.Find("AIStartSpawner").GetComponent<AIController>().numberOfBoar -= 1;
+                deadcounter--;
+            }
             Dead = true;
         }
 
