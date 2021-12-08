@@ -17,6 +17,12 @@ public class PlayerMovement : MonoBehaviour
     private bool isRaycast;
     private bool cro;
 
+    //örnek acildi
+    public GameObject GunScript;
+    public GameObject shotgunScript;
+    private shotgunScript asd;
+    private Gun gunsScript;
+
     //float
     private float distance = 0.4f;   
     private float jumpHeight = 2f;
@@ -26,18 +32,24 @@ public class PlayerMovement : MonoBehaviour
     private float crouchHeight = 1f;
     private float crouchSpeed = 40f;
 
-    //speed
-    [SerializeField] private float speed = 3f;
-    [SerializeField] private float crouchsSpeed = 1f;
-    [SerializeField] private float runSpeed = 6f;
+    //movement
+    private float hori;
+    private float vert;
+    
 
+    //speed
+    public float speed = 3f;
+    public float crouchsSpeed = 1f;
+    public float runSpeed = 6f;
+    public float idleSpeed = 0f;
+    
 
 
 
     //                ********SERIALIZE FIELD*********
     [SerializeField] private Transform ground;
     [SerializeField] private LayerMask mask;
-
+ 
   
 
 
@@ -45,8 +57,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        
         controller = GetComponent<CharacterController>();
-       
+        gunsScript = GunScript.GetComponent<Gun>();
+        asd = shotgunScript.GetComponent<shotgunScript>();
     }
 
     private void Update()
@@ -54,7 +68,7 @@ public class PlayerMovement : MonoBehaviour
 
         //is player touch the ground
         isGrounded = Physics.CheckSphere(ground.position, distance, mask);
-
+        
 
 
         //Functions
@@ -63,7 +77,8 @@ public class PlayerMovement : MonoBehaviour
         Gravity();
         Crouch();
         Run();
-        Raycastci();
+        crouchUpRaycast();
+     
 
     }
 
@@ -73,11 +88,11 @@ public class PlayerMovement : MonoBehaviour
     private void Movement()
     {
         //Player Movement Input
-        float Hori = Input.GetAxis("Horizontal");
-        float Vert = Input.GetAxis("Vertical");
+        hori = Input.GetAxis("Horizontal");
+        vert = Input.GetAxis("Vertical");
 
         //Player Move
-        Vector3 move = transform.right * Hori + transform.forward * Vert;
+        Vector3 move = transform.right * hori + transform.forward * vert;
         controller.Move(move * speed * Time.deltaTime);
        
 
@@ -115,13 +130,16 @@ public class PlayerMovement : MonoBehaviour
             CharacterHeight(crouchHeight);
             if(controller.height - 0.05f <= crouchHeight)
             {               
-                controller.height = crouchHeight;   
+                controller.height = crouchHeight;
+               
+
             }
         }
         else
         {
             if(controller.height < normalHeight && isRaycast == false)
             {
+                
                 float lastHeight = controller.height;
                 
                 CharacterHeight(normalHeight);
@@ -137,8 +155,22 @@ public class PlayerMovement : MonoBehaviour
 
 
     }
+    //örnek acildi silenecek
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.tag == "deneme"){
 
-    private void Raycastci()
+            //gunsScript.currentAmmo = gunsScript.maxAmmo;
+            gunsScript.looting = true;
+            gunsScript.magazineSize = gunsScript.maxAmmo + gunsScript.magazineSize;
+            //asd.magazineSize = asd.maxAmmo + asd.magazineSize;
+            Debug.Log("ammo güncellendi");
+            
+         
+        }
+    }
+
+    private void crouchUpRaycast()
     {
         //this function control is there any object above you
         RaycastHit hit;
@@ -162,12 +194,16 @@ public class PlayerMovement : MonoBehaviour
     private void Run()
     {
         //run speed
-        if (Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.LeftControl))
-        {
-            speed = runSpeed;
-        }
+            if (Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.W) && StaminaBar.instance.staminaBar.value > 5)
+            {
+            StaminaBar.instance.UseStamina(0.05f);
+              speed = runSpeed;
+              
+                     
+            }
+        
         //crouch speed
-        else if(Input.GetKey(KeyCode.LeftControl))
+        else if (Input.GetKey(KeyCode.LeftControl))
         {
             if (isGrounded)
             {
@@ -178,10 +214,36 @@ public class PlayerMovement : MonoBehaviour
         {
             speed = crouchsSpeed;
         }
+        else if (hori == 0 && vert == 0)
+        {
+            speed = idleSpeed;
+        }
         //normal speed
         else
         {
             speed = 3f;
         }
     }
+
+    private void StaminaController()
+    {
+        StaminaBar stamina = GetComponent<StaminaBar>();
+        if(stamina.currentStamina < 30)
+        {
+            speed = 3f;
+
+            if (Input.GetKey(KeyCode.LeftControl))
+            {
+                speed = crouchSpeed;
+
+            }
+
+           }
+
+
+
+
+
+    }
+
 }
