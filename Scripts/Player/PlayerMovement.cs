@@ -225,25 +225,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void StaminaController()
-    {
-        StaminaBar stamina = GetComponent<StaminaBar>();
-        if(stamina.currentStamina < 30)
-        {
-            speed = 3f;
-
-            if (Input.GetKey(KeyCode.LeftControl))
-            {
-                speed = crouchSpeed;
-
-            }
-
-           }
-
-
-
-
-
-    }
+   
 
 }
