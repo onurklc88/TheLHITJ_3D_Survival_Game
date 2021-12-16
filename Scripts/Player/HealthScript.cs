@@ -5,33 +5,40 @@ using UnityEngine.UI;
 
 public class HealthScript : MonoBehaviour
 {
-    public Text healthText;
+   
     
-    private float playerHealth;
-    private float maxHealth = 100f;
+   [HideInInspector] public float playerHealth;
+   [HideInInspector] public float maxHealth = 100f;
 
-    public float thrust = 5f;
-    public Rigidbody rigidBody;
+    public float thrust = 20f;
+ 
+    public bool canHit1 = true;
+    Vector3 currentPosition;
+    Rigidbody rb;
 
-    
     void Start()
     {
-        rigidBody = GetComponent<Rigidbody>();
+       
         playerHealth = maxHealth;
-        
+        rb = GetComponent<Rigidbody>();
+        currentPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+      
+
     }
 
     
     void Update()
     {
-
-        healthText.text = "" +playerHealth;
-
+       
+        Heal();
+       
     }
 
     public void takeDamage(float amount)
     {
-       
+        Vector3 deneme = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+      
+      
 
         if (playerHealth > 0) {
             
@@ -48,9 +55,18 @@ public class HealthScript : MonoBehaviour
 
     }
 
-    public void Heal(float amount)
+    public void Heal()
     {
-      
+
+
+       
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            Debug.Log("girdi");
+            rb.velocity = currentPosition * thrust;
+
+        }
+
 
 
     }
