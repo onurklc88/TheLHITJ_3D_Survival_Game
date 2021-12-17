@@ -13,7 +13,7 @@ public class AIAttack : MonoBehaviour
     public Transform pointOfView;
     public GameObject playerMesh;
     private PlayerMovement playerMovementScript;
-    private Rigidbody rb;
+    public static AIAttack AIAttackScript;
 
     //agent speed
     public float WalkingSpeed;
@@ -26,11 +26,10 @@ public class AIAttack : MonoBehaviour
     
    //Attack
     public float timeBetweenAttacks;
-    bool alreadyAttacked;
+    public bool alreadyAttacked;
     public float hitRange = 4f;
     public float damage;
- 
-   
+  
 
     //states
     public float sightRange;
@@ -56,6 +55,7 @@ public class AIAttack : MonoBehaviour
     private void Awake()
     {
 
+        AIAttackScript = this;
         animation = GetComponent<Animator>();
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
@@ -67,7 +67,7 @@ public class AIAttack : MonoBehaviour
 
     void Start()
     {
-        rb = playerMesh.GetComponent<Rigidbody>();
+       
         currentPatrolTime = patrolTime;
       
         
@@ -263,7 +263,7 @@ public class AIAttack : MonoBehaviour
     {
         animation.SetBool("attack", true);
         animation.SetBool("chase", false);
-        agent.SetDestination(transform.position);
+        agent.SetDestination(player.position);
         AIFace.LookAt(player.position);
 
         if (!alreadyAttacked)
@@ -276,8 +276,8 @@ public class AIAttack : MonoBehaviour
             {
 
                 Debug.Log(raycastHit.transform.name);
-              
-            
+             
+
             }
            
             HealthScript player = raycastHit.transform.GetComponent<HealthScript>();
@@ -287,23 +287,15 @@ public class AIAttack : MonoBehaviour
                
                
                 player.takeDamage(damage);
-        
+                
             }
             else
             {
                 Debug.Log("nothing detected");
             }
 
-            if (raycastHit.rigidbody != null)
-            {
-                Debug.Log("one day");
-                raycastHit.rigidbody.AddForce(-raycastHit.normal * 5f);
-            }
-            else
-            {
-                Debug.Log("2 day");
-            }
 
+            
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
          
