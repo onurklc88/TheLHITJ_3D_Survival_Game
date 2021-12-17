@@ -1,58 +1,100 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+
 
 public class HealthScript : MonoBehaviour
 {
-    public Text healthText;
+   
     
-    private float playerHealth;
-    private float maxHealth = 100f;
+   [HideInInspector] public float playerHealth;
+   [HideInInspector] public float maxHealth = 100f;
 
-    public float thrust = 5f;
-    public Rigidbody rigidBody;
 
-    
+    public PlayerMovement movementScript;
+
+
+   
+
     void Start()
     {
-        rigidBody = GetComponent<Rigidbody>();
+       
         playerHealth = maxHealth;
-        
+        movementScript = FindObjectOfType<PlayerMovement>();
+
     }
 
     
     void Update()
     {
 
-        healthText.text = "" +playerHealth;
-
+        asd();
+       
     }
 
     public void takeDamage(float amount)
     {
        
-
         if (playerHealth > 0) {
-            
-                playerHealth -= amount;
-            
 
+           
+            playerHealth -= amount;
+        
+            
         }
         else
         {
 
             Debug.Log("player is dead");
         }
-
-
-    }
-
-    public void Heal(float amount)
-    {
       
 
+    }
+
+    public void knockBack(Vector3 direction)
+    {
+
+        movementScript.KnockBack(direction);
+
 
     }
 
+    public void asd()
+    {
+
+        if (AIAttack.AIAttackScript.alreadyAttacked == true)
+        {
+
+            StartCoroutine(knockBack());
+            
+          }
+
+         
+    }
+    public void Heal()
+    {
+
+
+       
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            Debug.Log("girdi");
+            
+
+        }
+
+
+
+    }
+    IEnumerator knockBack()
+    {
+        yield return new WaitForSeconds(1.2f);
+      
+        Vector3 hitDirection = transform.position = new Vector3(transform.position.x + 0.1f, transform.position.y, transform.position.z + 0.1f);
+
+        hitDirection = hitDirection.normalized;
+        knockBack(hitDirection);
+        
+
+    }
 }

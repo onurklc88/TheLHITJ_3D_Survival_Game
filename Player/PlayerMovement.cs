@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
 
     //Vectors
     private Vector3 velocity;
-
+    private Vector3 moveDirection;
     //bool
     private bool isGrounded;
     private bool isCrouching;
@@ -22,6 +22,12 @@ public class PlayerMovement : MonoBehaviour
     public GameObject shotgunScript;
     private shotgunScript asd;
     private Gun gunsScript;
+    
+
+    //knockback when get hit
+    public float knockBackForce;
+    public float knockBackTime;
+    private float knockBackCounter;
 
     //float
     private float distance = 0.4f;   
@@ -78,6 +84,8 @@ public class PlayerMovement : MonoBehaviour
         Crouch();
         Run();
         crouchUpRaycast();
+      
+     
 
     }
 
@@ -86,16 +94,26 @@ public class PlayerMovement : MonoBehaviour
 
     private void Movement()
     {
+
+        if(knockBackCounter <= 0)
+        {
+
+        
         //Player Movement Input
         hori = Input.GetAxis("Horizontal");
         vert = Input.GetAxis("Vertical");
 
         //Player Move
-        Vector3 move = transform.right * hori + transform.forward * vert;
-        controller.Move(move * speed * Time.deltaTime);
-       
+         moveDirection = transform.right * hori + transform.forward * vert;
+        controller.Move(moveDirection * speed * Time.deltaTime);
 
-    }
+       }
+        else
+        {
+
+            knockBackCounter -= Time.deltaTime;
+        }
+}
 
     private void Jump()
     {
@@ -193,12 +211,16 @@ public class PlayerMovement : MonoBehaviour
     private void Run()
     {
         //run speed
-        if (Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.W))
-        {
-            speed = runSpeed;
-        }
+            if (Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.W) && StaminaBar.instance.staminaBar.value > 5)
+            {
+            StaminaBar.instance.UseStamina(0.05f);
+              speed = runSpeed;
+              
+                     
+            }
+        
         //crouch speed
-        else if(Input.GetKey(KeyCode.LeftControl))
+        else if (Input.GetKey(KeyCode.LeftControl))
         {
             if (isGrounded)
             {
@@ -219,4 +241,17 @@ public class PlayerMovement : MonoBehaviour
             speed = 3f;
         }
     }
+
+   
+    public void KnockBack(Vector3 direction)
+    {
+        knockBackCounter = knockBackTime;
+
+       
+
+        moveDirection = direction * knockBackForce;
+        moveDirection.y = knockBackForce;
+    }
+
+
 }
