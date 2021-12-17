@@ -5,13 +5,15 @@ using UnityEngine.AI;
 public class AIAttack : MonoBehaviour
 {
 
-
+    public Transform AIFace;
     public GameObject stealthSpeed;
     public NavMeshAgent agent;
     public Transform player;
     public LayerMask whatIsGround, whatIsPlayer;
     public Transform pointOfView;
+    public GameObject playerMesh;
     private PlayerMovement playerMovementScript;
+    private Rigidbody rb;
 
     //agent speed
     public float WalkingSpeed;
@@ -27,6 +29,8 @@ public class AIAttack : MonoBehaviour
     bool alreadyAttacked;
     public float hitRange = 4f;
     public float damage;
+ 
+   
 
     //states
     public float sightRange;
@@ -63,8 +67,9 @@ public class AIAttack : MonoBehaviour
 
     void Start()
     {
+        rb = playerMesh.GetComponent<Rigidbody>();
         currentPatrolTime = patrolTime;
-        
+      
         
     }
 
@@ -112,7 +117,7 @@ public class AIAttack : MonoBehaviour
              ChasePlayer();
         }
         //attack range
-        if (PlayerInAttcakRange && playerInsightRange && pointOfView)
+        if (PlayerInAttcakRange && playerInsightRange)
         {
             AttackPlayer();
         }
@@ -241,7 +246,7 @@ public class AIAttack : MonoBehaviour
    
     }
 
-
+    
 
     private void ChasePlayer()
     {
@@ -259,36 +264,58 @@ public class AIAttack : MonoBehaviour
         animation.SetBool("attack", true);
         animation.SetBool("chase", false);
         agent.SetDestination(transform.position);
-        transform.LookAt(player.position);
+        AIFace.LookAt(player.position);
 
         if (!alreadyAttacked)
         {
             //attack
             
             RaycastHit raycastHit;
-            if (Physics.Raycast(transform.position, transform.forward, out raycastHit, hitRange))
+
+            if (Physics.Raycast(AIFace.position, AIFace.forward, out raycastHit, hitRange))
             {
 
                 Debug.Log(raycastHit.transform.name);
-
+              
+            
             }
-
+           
             HealthScript player = raycastHit.transform.GetComponent<HealthScript>();
 
             if(player != null)
             {
+               
+               
                 player.takeDamage(damage);
+        
+            }
+            else
+            {
+                Debug.Log("nothing detected");
+            }
 
-             }
+            if (raycastHit.rigidbody != null)
+            {
+                Debug.Log("one day");
+                raycastHit.rigidbody.AddForce(-raycastHit.normal * 5f);
+            }
+            else
+            {
+                Debug.Log("2 day");
+            }
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
-
+         
         }
 
-
+        
 
     }
+
+   
+
+
     private void ResetAttack()
     {
         animation.SetBool("attack", false);
@@ -341,7 +368,7 @@ public class AIAttack : MonoBehaviour
         Gizmos.DrawWireSphere(pointOfView.transform.position, viewRange);
         Gizmos.color = Color.blue;
         Vector3 direction = transform.TransformDirection(Vector3.forward) * 5;
-        Gizmos.DrawRay(transform.position, direction);
+        Gizmos.DrawRay(AIFace.position, direction);
     }
 
 
