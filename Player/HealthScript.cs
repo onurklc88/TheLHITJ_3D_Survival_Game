@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 public class HealthScript : MonoBehaviour
@@ -10,9 +11,10 @@ public class HealthScript : MonoBehaviour
    [HideInInspector] public float playerHealth;
    [HideInInspector] public float maxHealth = 100f;
 
-
+    public Image bloodImage;
     public PlayerMovement movementScript;
-
+    public float healthPercent;
+    private bool Healing;
 
    
 
@@ -27,9 +29,9 @@ public class HealthScript : MonoBehaviour
     
     void Update()
     {
-
+      
         asd();
-       
+        Heal();
     }
 
     public void takeDamage(float amount)
@@ -71,6 +73,15 @@ public class HealthScript : MonoBehaviour
 
          
     }
+    public void UpdateBloodImage()
+    {
+
+      
+            healthPercent = (maxHealth - playerHealth) / 100;
+            bloodImage.color = new Color(255, 0, 0, healthPercent);
+            
+        }
+
     public void Heal()
     {
 
@@ -79,6 +90,11 @@ public class HealthScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.H))
         {
             Debug.Log("girdi");
+            playerHealth += 20;
+            
+            healthPercent = (maxHealth - playerHealth) / 100;
+            bloodImage.color = new Color(255, 0, 0, healthPercent);
+         
             
 
         }
