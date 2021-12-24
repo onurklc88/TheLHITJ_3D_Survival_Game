@@ -8,39 +8,21 @@ public class AIHealth : MonoBehaviour
     public float AIHealth1;
     public float AxeDamage = 0;
     private float counter = 0.1f;
-
-
-    public GameObject Animal;
+    private float deadcounter = 0.1f;
 
     [SerializeField]
     //I put the items to store inside of what we want instanciate 
     public GameObject[] ItemsDeck;
     //Then I will fetch these objects from ýtemsDeck
     private GameObject[] insantanciatedObects;
+
     [HideInInspector] public bool hit;
+    [HideInInspector] public bool Dead;
 
-
-
-    public bool Dead;
-    private Animator anima;
-    private AIPatrolling AISpeed;
-
-    private void Awake()
+    private void Start()
     {
-
-        anima = GetComponent<Animator>();
-        
-    }
-
-
-    void Start()
-    {
-        
        
-     
-      
     }
-
 
     void Update()
     {
@@ -52,24 +34,7 @@ public class AIHealth : MonoBehaviour
    
 
 
-    private void OnTriggerEnter(Collider TakeDamage)
-    {
-
-
-        //if AI touch with axe
-        if (TakeDamage.gameObject.tag == "Axe")
-        {
-            //AI taking axe damage
-            AIHealth1 -= AxeDamage;
-             Debug.Log(AIHealth1);
-
-        }
-       
-
-
-
-    }
-    //taking damage by guns
+  //taking damage by guns OR axe
    public void TakeDamage (float amount)
     {
 
@@ -92,10 +57,40 @@ public class AIHealth : MonoBehaviour
    public void Death()
     {
         Dead = false;
-
+        
         if (AIHealth1 <= 0)
         {
-           
+
+            if(gameObject.tag == "deer" && deadcounter > 0)
+            {
+                
+                GameObject.Find("AIStartSpawner").GetComponent<AIController>().numberOfDeer -= 1;
+                deadcounter--;
+            }
+            if (gameObject.tag == "rabbit" && deadcounter > 0)
+            {
+
+                GameObject.Find("AIStartSpawner").GetComponent<AIController>().numberOfRabbit -= 1;
+                deadcounter--;
+            }
+            if (gameObject.tag == "wolf" && deadcounter > 0)
+            {
+
+                GameObject.Find("AIStartSpawner").GetComponent<AIController>().numberOfWolf -= 1;
+                deadcounter--;
+            }
+            if (gameObject.tag == "bear" && deadcounter > 0)
+            {
+
+                GameObject.Find("AIStartSpawner").GetComponent<AIController>().numberOfBear -= 1;
+                deadcounter--;
+            }
+            if (gameObject.tag == "boar" && deadcounter > 0)
+            {
+
+                GameObject.Find("AIStartSpawner").GetComponent<AIController>().numberOfBoar -= 1;
+                deadcounter--;
+            }
             Dead = true;
         }
 
