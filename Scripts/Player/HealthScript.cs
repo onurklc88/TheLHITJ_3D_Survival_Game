@@ -15,13 +15,28 @@ public class HealthScript : MonoBehaviour
     public Image bloodImage;
     public PlayerMovement movementScript;
     public float healthPercent;
-    private bool Healing;
+    public Transform[] Animal;
+    
+    public LayerMask bear,wolf,boar;
+    public bool bearInsightRange, boarInsightRange, wolfInsightRange;
 
+
+    private float animal_x;
+    private float animal_z;
+    public float sightRange;
+
+
+    private float player_x;
+    private float player_z;
+   
+    
+    private bool Healing;
+ 
    
 
     void Start()
     {
-       
+        
         playerHealth = maxHealth;
         currentHealth = playerHealth;
         movementScript = FindObjectOfType<PlayerMovement>();
@@ -31,11 +46,15 @@ public class HealthScript : MonoBehaviour
     
     void Update()
     {
-        
+       
         takeDamageKnock();
         knockBackController();
         Heal();
+        animalPosition();
+       
+
     }
+   
 
     public void takeDamage(float amount)
     {
@@ -119,18 +138,170 @@ public class HealthScript : MonoBehaviour
 
         }
 
+        
 
 
+
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        
+        if(other.gameObject.name == "Bear(Clone)")
+        {
+
+            bearInsightRange = true;
+
+        }
+        else if(other.gameObject.name == "Boar(Clone)")
+        {
+
+            boarInsightRange = true;
+
+        }
+        else if(other.gameObject.name == "Wolf(Clone)")
+        {
+
+            wolfInsightRange = true;
+        }
+        
+    }
+    public void animalPosition()
+    {
+    
+        if (Physics.CheckSphere(transform.position, sightRange, bear))
+        {
+            bearInsightRange = true;
+        }
+        if (Physics.CheckSphere(transform.position, sightRange, boar))
+        {
+            boarInsightRange = true;
+        }
+        if (Physics.CheckSphere(transform.position, sightRange, wolf))
+        {
+            wolfInsightRange = true;
+
+        }
     }
     IEnumerator knockBack()
     {
-        yield return new WaitForSeconds(1.1f);
+        yield return new WaitForSeconds(0.8f);
+       
 
-       Vector3 hitDirection = transform.position = new Vector3(transform.position.x + 0.1f, transform.position.y, transform.position.z + 0.2f);
+        if (bearInsightRange == true)
+        {
+            Debug.Log("bear za");
+            Vector3 animalPosition = new Vector3(Animal[0].transform.position.x, Animal[0].transform.position.y, Animal[0].transform.position.z);
+            animal_x = animalPosition.x;
+            animal_z = animalPosition.z;
+            bearInsightRange = false;
+
+        }
+        else if (boarInsightRange == true)
+        {
+            Debug.Log("boar");
+            Vector3 animalPosition = new Vector3(Animal[1].transform.position.x, Animal[1].transform.position.y, Animal[1].transform.position.z);
+            animal_x = animalPosition.x;
+            animal_z = animalPosition.z;
+            boarInsightRange = false;
+        }
+        else if (wolfInsightRange == true)
+        {
+            Debug.Log("wolf");
+            Vector3 animalPosition = new Vector3(Animal[2].transform.position.x, Animal[2].transform.position.y, Animal[2].transform.position.z);
+            animal_x = animalPosition.x;
+            animal_z = animalPosition.z;
+            wolfInsightRange = false;
+        }
+
+       
+        player_x = transform.position.x;
+        player_z = transform.position.z;
         
-       hitDirection = hitDirection.normalized;
+
+
+         if(animal_x > 0)
+
+            {
+
+              if (animal_x > player_x)
+                    {
+
+                player_x -= 0.1f;
+            
+
+                    }
+                 else
+                 {
+
+                  player_x += 0.1f;
+
+                   }
+                     }
+            else
+               {
+            if (animal_x > player_x)
+            {
+
+                player_x += 0.1f;
+
+
+            }
+            else
+            {
+
+                player_x -= 0.1f;
+
+            }
+
+        }
+            if (animal_z > 0)
+                {
+
+
+        
+                if (animal_z > player_z)
+                {
+
+                player_z -= 0.2f;
+
+                 }
+                else
+                    {
+
+                player_z += 0.2f;
+                       }
+                }
+        else
+        {
+            if (animal_z > player_z)
+            {
+
+                player_z -= 0.2f;
+
+            }
+            else
+            {
+
+                player_z += 0.2f;
+            }
+
+        }
+
+   
+        Vector3 playerTransform1 = new Vector3(player_x, transform.position.y, player_z);
+        Vector3 hitDirection = transform.position = new Vector3(playerTransform1.x, playerTransform1.y, playerTransform1.z);
+        
+
+
+
+
+        hitDirection = hitDirection.normalized;
+        
         knockBack(hitDirection);
         damageTaken = false;
         currentHealth = playerHealth;
-    }
+        }
+    
+
 }
+
