@@ -49,7 +49,7 @@ public class HealthScript : MonoBehaviour
        
         takeDamageKnock();
         knockBackController();
-        Heal();
+       
         animalPosition();
        
 
@@ -121,22 +121,40 @@ public class HealthScript : MonoBehaviour
             
         }
 
-    public void Heal()
+    public void Heal(float amount)
     {
 
 
-       
-        if (Input.GetKeyDown(KeyCode.H))
+        if (playerHealth < 100)
         {
-            Debug.Log("girdi");
-            playerHealth += 20;
+
             currentHealth = playerHealth;
+            playerHealth += amount;
+
             healthPercent = (maxHealth - playerHealth) / 100;
             bloodImage.color = new Color(255, 0, 0, healthPercent);
-         
-            
 
         }
+        else
+        {
+
+            Debug.Log("player is dead");
+        }
+
+
+
+        
+         if (Input.GetKeyDown(KeyCode.H))
+         {
+             Debug.Log("girdi");
+             playerHealth += 20;
+             currentHealth = playerHealth;
+             healthPercent = (maxHealth - playerHealth) / 100;
+             bloodImage.color = new Color(255, 0, 0, healthPercent);
+
+
+
+         }
 
         
 
