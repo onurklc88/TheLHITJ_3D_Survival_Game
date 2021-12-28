@@ -19,8 +19,6 @@ public class ThisItem : MonoBehaviour
     void Start()
     {
         thisItem[0] = ItemData.itemList[thisId];
-
-
     }
 
 

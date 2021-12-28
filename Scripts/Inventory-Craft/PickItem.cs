@@ -28,6 +28,7 @@ public class PickItem : MonoBehaviour
             {
                 if (hit2.collider.gameObject.tag == "Select")
                 {
+                    //use Y and ITEM in inv script 
                     y = hit2.collider.gameObject;
                     Item = hit2.collider.gameObject;
                 }
@@ -40,7 +41,7 @@ public class PickItem : MonoBehaviour
 
 
 
-
+            //if press E take item and destroy
             if (Input.GetKeyDown(KeyCode.E))
             {
                 Destroy(Item);
