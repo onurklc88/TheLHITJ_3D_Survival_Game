@@ -9,8 +9,11 @@ public class FreezingSystem : MonoBehaviour
     public float currentDegree;
     public Image ringDegreeBar;
     public GameObject player;
+    public Image freezeImage;
 
+    private float freezeTimer = 5f;
     private float lerpSpeed;
+    private float degreePercentage;
     private WeatherManager weatherManager;
     private HealthScript HSript;
     public static FreezingSystem freezeSystem;
@@ -39,7 +42,7 @@ public class FreezingSystem : MonoBehaviour
         DegreeBarFiller();
         ColorChanger();
         damageToPlayer();
-
+        freezeEffect();
 
     }
 
@@ -58,6 +61,17 @@ public class FreezingSystem : MonoBehaviour
         Color healthColor = Color.Lerp(Color.blue, Color.yellow, (currentDegree / maxDegree));
         ringDegreeBar.color = healthColor;
     }
+
+    public void freezeEffect()
+    {
+
+        degreePercentage = (maxDegree - currentDegree) / 100;
+        freezeImage.color = new Color(60, 255, 255, degreePercentage);
+
+
+
+    }
+
 
     public void decreaseDegree(float decreaseD)
     {
@@ -81,13 +95,22 @@ public class FreezingSystem : MonoBehaviour
     public void damageToPlayer()
     {
 
-        if(currentDegree < 10f)
+        if(currentDegree < 10f && currentDegree > 0)
         {
+            
+           if(freezeTimer >= 5f)
+            {
+                HSript.takeDamage(5f);
+                freezeTimer -= 5f;
+            }
+            else
+            {
+                freezeTimer +=1f * Time.deltaTime;
+            }
 
-            HSript.takeDamage(0.1f);
-            Debug.Log(HSript.currentHealth);
 
         }
+        
 
 
     }
