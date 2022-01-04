@@ -10,22 +10,20 @@ public class HealthScript : MonoBehaviour
     
    [HideInInspector] public float playerHealth;
    [HideInInspector] public float maxHealth = 100f;
-    private float currentHealth;
+    public float currentHealth;
     public bool damageTaken;
     public Image bloodImage;
     public PlayerMovement movementScript;
     public float healthPercent;
     public Transform[] Animal;
     
-    public LayerMask bear,wolf,boar;
+    
     public bool bearInsightRange, boarInsightRange, wolfInsightRange;
 
-
+    //position record
     private float animal_x;
     private float animal_z;
     public float sightRange;
-
-
     private float player_x;
     private float player_z;
    
@@ -49,9 +47,9 @@ public class HealthScript : MonoBehaviour
        
         takeDamageKnock();
         knockBackController();
-       
-        animalPosition();
-       
+        UpdateBloodImage();
+
+
 
     }
    
@@ -102,10 +100,20 @@ public class HealthScript : MonoBehaviour
 
         if (damageTaken == true)
         {
+            //is damage taken by survival conditions or by animal
+            if(bearInsightRange == false && wolfInsightRange == false && boarInsightRange == false)
+            {
 
+                Debug.Log("damage by any condition");
+
+            }
+            else
+            {
+                StartCoroutine(knockBack());
+            }
             
-             StartCoroutine(knockBack());
-           
+       
+          
             
 
         }
@@ -144,21 +152,7 @@ public class HealthScript : MonoBehaviour
 
 
         
-         if (Input.GetKeyDown(KeyCode.H))
-         {
-             Debug.Log("girdi");
-             playerHealth += 20;
-             currentHealth = playerHealth;
-             healthPercent = (maxHealth - playerHealth) / 100;
-             bloodImage.color = new Color(255, 0, 0, healthPercent);
-
-
-
-         }
-
         
-
-
 
     }
     private void OnTriggerEnter(Collider other)
@@ -182,24 +176,11 @@ public class HealthScript : MonoBehaviour
             wolfInsightRange = true;
         }
         
-    }
-    public void animalPosition()
-    {
     
-        if (Physics.CheckSphere(transform.position, sightRange, bear))
-        {
-            bearInsightRange = true;
-        }
-        if (Physics.CheckSphere(transform.position, sightRange, boar))
-        {
-            boarInsightRange = true;
-        }
-        if (Physics.CheckSphere(transform.position, sightRange, wolf))
-        {
-            wolfInsightRange = true;
-
-        }
+    
     }
+
+
     IEnumerator knockBack()
     {
         yield return new WaitForSeconds(0.8f);
@@ -230,6 +211,7 @@ public class HealthScript : MonoBehaviour
             animal_z = animalPosition.z;
             wolfInsightRange = false;
         }
+        
 
        
         player_x = transform.position.x;
