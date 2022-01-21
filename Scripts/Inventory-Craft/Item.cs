@@ -16,15 +16,13 @@ public class Item
     public bool consumable;
     public int nutritionalValue;
     public bool canBeCraftable;
-
-
     public int n1;
     public int n2;
     public int n3;
-
     public int q1;
     public int q2;
     public int q3;
+    public string armorType;
 
 
     public Item()
@@ -32,7 +30,7 @@ public class Item
 
     }
 
-    public Item(int Id,string Name, string Description, Sprite ItemSprite, int Stack, int MaxStack, bool CanUse, bool Consumable, int NutritionalValue, bool CanBeCraftable, int N1, int N2, int N3, int Q1, int Q2, int Q3)
+    public Item(int Id,string Name, string Description, Sprite ItemSprite, int Stack, int MaxStack, bool CanUse, bool Consumable, int NutritionalValue, bool CanBeCraftable, int N1, int N2, int N3, int Q1, int Q2, int Q3, string ArmorType)
     {
         //ITEMS DATA
         id = Id;
@@ -51,6 +49,7 @@ public class Item
         q1 = Q1;
         q2 = Q2;
         q3 = Q3;
+        armorType = ArmorType;
 
     }
 

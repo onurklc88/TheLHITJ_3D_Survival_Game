@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class Inventory : MonoBehaviour
 {
     public List<Item> ourInventory = new List<Item>();
@@ -13,6 +14,28 @@ public class Inventory : MonoBehaviour
 
     public static Inventory inv;
 
+    public float deneme12 = 100f;
+    
+    public Camera cam2;
+
+    // Right Click menu
+    public int armorNO;
+    public bool isHelmet;
+    public bool isChest;
+    public bool isPant;
+    public bool isBoots;
+    public bool armorCheck;
+    //
+
+    // build inputs
+    public GameObject buildUI;
+    public GameObject[] buildSlots;
+    public GameObject[] buildItemsPreview;
+    public int BuildId = 0;
+    private bool buildMenuOpen;
+    
+    
+    //
     public int slotsNumber;
 
     public GameObject x;
@@ -20,7 +43,7 @@ public class Inventory : MonoBehaviour
     public int a;
     public int b;
     public int hotbarSizeHolder;
-   
+
     public int holdSlotNumber;
 
     public int rest;
@@ -37,10 +60,25 @@ public class Inventory : MonoBehaviour
     public bool shotgunOpen;
     public bool revolverOpen;
     public bool torchOpen;
+    public bool hammerOpen;
+    public bool click;
 
 
     public int slotTemporary;
 
+    //Context Menu
+    public GameObject ContextMenuArmor;
+    public GameObject ContextMenuDrink;
+    public GameObject ContextMenuEat;
+    public GameObject ContextMenuNormal;
+    public GameObject ContextMenuUnequip;
+    public int holdArmorNo;
+    /////////////////
+
+    public GameObject Deneme;
+    public Transform denemeCube;
+
+    public Vector3 mousePos;
     public GameObject Camera;
     public GameObject InventorySlots;
     public GameObject[] HotbarSlots;
@@ -50,8 +88,8 @@ public class Inventory : MonoBehaviour
     public Sprite[] slotSprite;
     public Text[] stackText;
     public int[] slotStack;
-    
-    /*
+    public Image HelmetSlot, ChestSlot, PantSlot, BootsSlot;
+
     //CRAFT INPUTS----------------------------
     public Image[] slotInCraft;
     public Sprite[] slotInCraftSprite;
@@ -68,7 +106,8 @@ public class Inventory : MonoBehaviour
 
     public bool craft;
     //-------------------------------------------
-    */
+
+
     //health script
     private HealthScript HSript;
 
@@ -81,27 +120,43 @@ public class Inventory : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ourInventory[4] = ItemData.itemList[4];
-        slotStack[4] = 5;
+        ourInventory[4] = ItemData.itemList[8];
+        slotStack[4] = 15;
         ourInventory[5] = ItemData.itemList[4];
         slotStack[5] = 3;
         ourInventory[7] = ItemData.itemList[14];
-        slotStack[7] = 1;
-        /*
-        firstCraftableItemID = 11;
-        lastCraftableItemID = 14;
+        slotStack[7] = 15;
+        ourInventory[0] = ItemData.itemList[23];
+        slotStack[0] = 1;
+        ourInventory[1] = ItemData.itemList[22];
+        slotStack[1] = 1;
+        ourInventory[2] = ItemData.itemList[20];
+        slotStack[2] = 1;
+        ourInventory[3] = ItemData.itemList[21];
+        slotStack[3] = 1;
+        ourInventory[8] = ItemData.itemList[24];
+        slotStack[8] = 1;
+        ourInventory[10] = ItemData.itemList[7];
+        slotStack[10] = 1;
+        ourInventory[11] = ItemData.itemList[1];
+        slotStack[11] = 1;
+
+        firstCraftableItemID = 16;
+        lastCraftableItemID = 23;
         craftableItemID = firstCraftableItemID;
-        */
+
 
     }
 
     // Update is called once per frame
     void Update()
     {
+        mousePos = Input.mousePosition;
         closeInventory();
         Hotbar();
-    
-
+        rightClickMenu();
+        Drop();
+        BuildItem();
 
         for (int i = 0; i < slotsNumber; i++)
         {
@@ -220,26 +275,9 @@ public class Inventory : MonoBehaviour
         {
             canConsume = false;
         }
+        
+        
 
-        /*if (canConsume == true && HSript.playerHealth != 100)
-        {
-            if (Input.GetMouseButtonDown(1))
-            {
-
-                if (slotStack[b] == 1)
-                {
-                    HSript.Heal(ourInventory[b].nutritionalValue);
-                    ourInventory[b] = ItemData.itemList[0];
-                    slotStack[b] = 0;
-                }
-                else
-                {
-                    slotStack[b]--;
-                    HSript.Heal(ourInventory[b].nutritionalValue);
-                }
-            }
-        }*/
-        /*
         //CRAFT
         craftedItemName.text = "" + ItemData.itemList[craftableItemID].name;
 
@@ -258,17 +296,17 @@ public class Inventory : MonoBehaviour
         craftingText[1].text = "" + ItemData.itemList[craftableItemID].q2;
         craftingText[2].text = "" + ItemData.itemList[craftableItemID].q3;
 
-        */
+
     }
 
-        public void StartDrag(Image slotX)
+    public void StartDrag(Image slotX)
     {
-        for(int i=0; i<slotsNumber; i++)
+        for (int i = 0; i < slotsNumber; i++)
         {
-            if(slot[i] == slotX)
+            if (slot[i] == slotX)
             {
                 a = i;
-                
+              
             }
         }
     }
@@ -285,25 +323,25 @@ public class Inventory : MonoBehaviour
                 slotStack[a] = slotStack[a] / 2 + rest;
             }
         }
-        else if(ctrl == true && shift != true) 
+        else if (ctrl == true && shift != true)
         {
-            if(ourInventory[b].id == 0)
+            if (ourInventory[b].id == 0)
             {
                 ourInventory[b] = ourInventory[a];
                 rest = slotStack[a] - 1;
                 slotStack[b] = slotStack[a] - rest;
                 slotStack[a] = rest;
             }
-        } 
+        }
         else
         {
             if (a != b)
             {
                 if (ourInventory[a].id != ourInventory[b].id)
                 {
-                    if(a >= 20)
+                    if (a >= 20)
                     {
-                        
+
                         HotbarSlots[a - 20].GetComponent<RectTransform>().localScale = new Vector3(0.8f, 0.8f, 1);
                     }
 
@@ -348,27 +386,28 @@ public class Inventory : MonoBehaviour
                 b = i;
               
             }
+
         }
     }
 
     public void Hotbar()
     {
-        for(int i=0; i < 6; i++)
+        for (int i = 0; i < 6; i++)
         {
             if (Input.GetKeyDown(hotbarKeys[i]))
             {
                 hotbarSizeHolder = i;
-                if(ourInventory[20+i].canUse == true && isOpen == false)
+                if (ourInventory[20 + i].canUse == true && isOpen == false)
                 {
                     Debug.Log("true");
                     isOpen = true;
                     HotbarSlots[i].GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1);
 
-                    
 
+                    
                     holdSlotNumber = i;
 
-                    if(ourInventory[20+i].id == 1)
+                    if (ourInventory[20 + i].id == 16)
                     {
                         HotbarItems[0].SetActive(true);
                         axeOpen = true;
@@ -383,19 +422,24 @@ public class Inventory : MonoBehaviour
                         HotbarItems[2].SetActive(true);
                         shotgunOpen = true;
                     }
-                    else if (ourInventory[20 + i].id == 14)
+                    else if (ourInventory[20 + i].id == 19)
                     {
                         HotbarItems[3].SetActive(true);
                         torchOpen = true;
                     }
+                    else if (ourInventory[20 + i].id == 1)
+                    {
+                        HotbarItems[4].SetActive(true);
+                        hammerOpen = true;
+                    }
                 }
-                else if(ourInventory[20 + i].canUse == true && isOpen == true && i == holdSlotNumber)
+                else if (ourInventory[20 + i].canUse == true && isOpen == true && i == holdSlotNumber)
                 {
                     isOpen = false;
                     HotbarSlots[i].GetComponent<RectTransform>().localScale = new Vector3(0.8f, 0.8f, 1);
-                    
 
-                    if (ourInventory[20 + i].id == 1)
+
+                    if (ourInventory[20 + i].id == 16)
                     {
                         HotbarItems[0].SetActive(false);
                         axeOpen = false;
@@ -410,30 +454,36 @@ public class Inventory : MonoBehaviour
                         HotbarItems[2].SetActive(false);
                         shotgunOpen = false;
                     }
-                    else if(ourInventory[20+i].id == 14)
+                    else if (ourInventory[20 + i].id == 19)
                     {
                         HotbarItems[3].SetActive(false);
                         torchOpen = false;
+                    }
+                    else if (ourInventory[20 + i].id == 1)
+                    {
+                        HotbarItems[4].SetActive(false);
+                        hammerOpen = false;
                     }
                 }
                 else if (ourInventory[20 + i].canUse == true && i != holdSlotNumber)
                 {
                     HotbarSlots[holdSlotNumber].GetComponent<RectTransform>().localScale = new Vector3(0.8f, 0.8f, 1);
                     HotbarSlots[i].GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1);
-                    
+
                     isOpen = true;
 
-                    if (ourInventory[20 + i].id == 1)
+                    if (ourInventory[20 + i].id == 16)
                     {
                         HotbarItems[0].SetActive(true);
                         HotbarItems[1].SetActive(false);
                         HotbarItems[2].SetActive(false);
                         HotbarItems[3].SetActive(false);
+                        HotbarItems[4].SetActive(false);
                         torchOpen = false;
                         axeOpen = true;
                         revolverOpen = false;
                         shotgunOpen = false;
-
+                        hammerOpen = false;
                     }
                     else if (ourInventory[20 + i].id == 2)
                     {
@@ -441,10 +491,12 @@ public class Inventory : MonoBehaviour
                         HotbarItems[2].SetActive(false);
                         HotbarItems[0].SetActive(false);
                         HotbarItems[3].SetActive(false);
+                        HotbarItems[4].SetActive(false);
                         torchOpen = false;
                         axeOpen = false;
                         revolverOpen = true;
                         shotgunOpen = false;
+                        hammerOpen = false;
                     }
                     else if (ourInventory[20 + i].id == 3)
                     {
@@ -452,27 +504,44 @@ public class Inventory : MonoBehaviour
                         HotbarItems[0].SetActive(false);
                         HotbarItems[1].SetActive(false);
                         HotbarItems[3].SetActive(false);
+                        HotbarItems[4].SetActive(false);
                         torchOpen = false;
                         axeOpen = false;
                         revolverOpen = false;
                         shotgunOpen = true;
+                        hammerOpen = false;
                     }
-                    else if (ourInventory[20+i].id == 14)
+                    else if (ourInventory[20 + i].id == 19)
                     {
                         HotbarItems[2].SetActive(false);
                         HotbarItems[0].SetActive(false);
                         HotbarItems[1].SetActive(false);
                         HotbarItems[3].SetActive(true);
+                        HotbarItems[4].SetActive(false);
                         torchOpen = true;
                         axeOpen = false;
                         revolverOpen = false;
                         shotgunOpen = false;
+                        hammerOpen = false;
+                    }
+                    else if (ourInventory[20 + i].id == 1)
+                    {
+                        HotbarItems[2].SetActive(false);
+                        HotbarItems[0].SetActive(false);
+                        HotbarItems[1].SetActive(false);
+                        HotbarItems[3].SetActive(false);
+                        HotbarItems[4].SetActive(true);
+                        torchOpen = false;
+                        axeOpen = false;
+                        revolverOpen = false;
+                        shotgunOpen = false;
+                        hammerOpen = true;
                     }
 
                     holdSlotNumber = i;
-                    
+
                 }
-                else if(ourInventory[20 + i].id != 1 && ourInventory[20 + i].id != 2 && ourInventory[20 + i].id != 3 && ourInventory[20 + i].id != 14)
+                else if (ourInventory[20 + i].id != 16 && ourInventory[20 + i].id != 2 && ourInventory[20 + i].id != 3 && ourInventory[20 + i].id != 19 && ourInventory[20 + i].id != 1)
                 {
                     HotbarSlots[0].GetComponent<RectTransform>().localScale = new Vector3(0.8f, 0.8f, 1);
                     HotbarSlots[1].GetComponent<RectTransform>().localScale = new Vector3(0.8f, 0.8f, 1);
@@ -480,26 +549,25 @@ public class Inventory : MonoBehaviour
                     HotbarSlots[3].GetComponent<RectTransform>().localScale = new Vector3(0.8f, 0.8f, 1);
                     HotbarSlots[4].GetComponent<RectTransform>().localScale = new Vector3(0.8f, 0.8f, 1);
                     HotbarSlots[5].GetComponent<RectTransform>().localScale = new Vector3(0.8f, 0.8f, 1);
-                    HotbarSlots[6].GetComponent<RectTransform>().localScale = new Vector3(0.8f, 0.8f, 1);
-
+                    
                 }
-
-
 
 
             }
             else
             {
-                if (ourInventory[20 + hotbarSizeHolder].id == 1 && isOpen == true)
+                if (ourInventory[20 + hotbarSizeHolder].id == 16 && isOpen == true)
                 {
                     HotbarItems[0].SetActive(true);
                     HotbarItems[1].SetActive(false);
                     HotbarItems[2].SetActive(false);
                     HotbarItems[3].SetActive(false);
+                    HotbarItems[4].SetActive(false);
                     torchOpen = false;
                     axeOpen = true;
                     revolverOpen = false;
                     shotgunOpen = false;
+                    hammerOpen = false;
                     HotbarSlots[hotbarSizeHolder].GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1);
                 }
                 else if (ourInventory[20 + hotbarSizeHolder].id == 2 && isOpen == true)
@@ -508,10 +576,12 @@ public class Inventory : MonoBehaviour
                     HotbarItems[2].SetActive(false);
                     HotbarItems[0].SetActive(false);
                     HotbarItems[3].SetActive(false);
+                    HotbarItems[4].SetActive(false);
                     torchOpen = false;
                     axeOpen = false;
                     revolverOpen = true;
                     shotgunOpen = false;
+                    hammerOpen = false;
                     HotbarSlots[hotbarSizeHolder].GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1);
                 }
                 else if (ourInventory[20 + hotbarSizeHolder].id == 3 && isOpen == true)
@@ -520,39 +590,61 @@ public class Inventory : MonoBehaviour
                     HotbarItems[0].SetActive(false);
                     HotbarItems[1].SetActive(false);
                     HotbarItems[3].SetActive(false);
+                    HotbarItems[4].SetActive(false);
                     torchOpen = false;
                     axeOpen = false;
                     revolverOpen = false;
                     shotgunOpen = true;
+                    hammerOpen = false;
                     HotbarSlots[hotbarSizeHolder].GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1);
                 }
-                else if (ourInventory[20 + hotbarSizeHolder].id == 14 && isOpen == true)
+                else if (ourInventory[20 + hotbarSizeHolder].id == 19 && isOpen == true)
                 {
                     HotbarItems[2].SetActive(false);
                     HotbarItems[0].SetActive(false);
                     HotbarItems[1].SetActive(false);
                     HotbarItems[3].SetActive(true);
+                    HotbarItems[4].SetActive(false);
                     torchOpen = true;
                     axeOpen = false;
                     revolverOpen = false;
                     shotgunOpen = false;
+                    hammerOpen = false;
+                    HotbarSlots[hotbarSizeHolder].GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1);
+                }
+                else if (ourInventory[20 + hotbarSizeHolder].id == 1 && isOpen == true)
+                {
+                    HotbarItems[2].SetActive(false);
+                    HotbarItems[0].SetActive(false);
+                    HotbarItems[1].SetActive(false);
+                    HotbarItems[3].SetActive(false);
+                    HotbarItems[4].SetActive(true);
+                    torchOpen = false;
+                    axeOpen = false;
+                    revolverOpen = false;
+                    shotgunOpen = false;
+                    hammerOpen = true;
                     HotbarSlots[hotbarSizeHolder].GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1);
                 }
             }
 
         }
 
-        if (ourInventory[20 + hotbarSizeHolder].id != 1 && ourInventory[20 + hotbarSizeHolder].id != 2 && ourInventory[20 + hotbarSizeHolder].id != 3 && ourInventory[20 + hotbarSizeHolder].id != 14)
+        if (ourInventory[20 + hotbarSizeHolder].id != 16 && ourInventory[20 + hotbarSizeHolder].id != 2 && ourInventory[20 + hotbarSizeHolder].id != 3 && ourInventory[20 + hotbarSizeHolder].id != 19 && ourInventory[20 + hotbarSizeHolder].id != 1)
         {
             HotbarItems[2].SetActive(false);
             HotbarItems[0].SetActive(false);
             HotbarItems[1].SetActive(false);
             HotbarItems[3].SetActive(false);
+            HotbarItems[4].SetActive(false);
             torchOpen = false;
             axeOpen = false;
             revolverOpen = false;
             shotgunOpen = false;
+            hammerOpen = false;
+            
         }
+
     }
 
 
@@ -561,7 +653,7 @@ public class Inventory : MonoBehaviour
         //Open and Close Inv
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if(inventoryOpen == false)
+            if (inventoryOpen == false)
             {
                 InventorySlots.SetActive(true);
                 inventoryOpen = true;
@@ -577,28 +669,687 @@ public class Inventory : MonoBehaviour
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
             }
-            
+
         }
     }
 
 
-    /*
+
     //CraftMenu Left-Right Button
     public void PreviousItem()
     {
-        if(craftableItemID > firstCraftableItemID)
+        if (craftableItemID > firstCraftableItemID)
         {
             craftableItemID--;
         }
     }
     public void NextItem()
     {
-        if(craftableItemID < lastCraftableItemID)
+        if (craftableItemID < lastCraftableItemID)
         {
             craftableItemID++;
         }
     }
-    */
+
+
+
+    public void CraftItem()
+    {
+        int a = 0;
+        int b = 0;
+        int c = 0;
+
+        for (int i = 0; i < slotsNumber; i++)
+        {
+            if (ourInventory[i].id == ItemData.itemList[craftableItemID].n1)
+            {
+                a += slotStack[i];
+            }
+        }
+
+        for (int i = 0; i < slotsNumber; i++)
+        {
+            if (ourInventory[i].id == ItemData.itemList[craftableItemID].n2)
+            {
+                b += slotStack[i];
+            }
+        }
+
+        for (int i = 0; i < slotsNumber; i++)
+        {
+            if (ourInventory[i].id == ItemData.itemList[craftableItemID].n3)
+            {
+                c += slotStack[i];
+            }
+        }
+
+        if (a >= ItemData.itemList[craftableItemID].q1 && b >= ItemData.itemList[craftableItemID].q2 && c >= ItemData.itemList[craftableItemID].q3)
+        {
+            craft = true;
+        }
+        else
+        {
+            craft = false;
+        }
+
+        if (craft == true)
+        {
+            a = ItemData.itemList[craftableItemID].q1;
+            b = ItemData.itemList[craftableItemID].q2;
+            c = ItemData.itemList[craftableItemID].q3;
+
+            for (int i = 0; i < slotsNumber; i++)
+            {
+                if (ourInventory[i].id == craftableItemID)
+                {
+                    if (slotStack[i] == ourInventory[i].maxStack)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        slotStack[i] += 1;
+                        i = slotsNumber;
+                    }
+
+                    for (int j = 0; j < slotsNumber; j++)
+                    {
+                        if (ourInventory[j].id == ItemData.itemList[craftableItemID].n1 && a > 0)
+                        {
+                            if (slotStack[j] > a)
+                            {
+                                slotStack[j] -= a;
+                                a = 0;
+                            }
+                            else
+                            {
+                                a -= slotStack[j];
+                                slotStack[j] = 0;
+                                ourInventory[j] = ItemData.itemList[0];
+                            }
+                        }
+                    }
+
+                    for (int k = 0; k < slotsNumber; k++)
+                    {
+                        if (ourInventory[k].id == ItemData.itemList[craftableItemID].n2 && b > 0)
+                        {
+                            if (slotStack[k] > b)
+                            {
+                                slotStack[k] -= b;
+                                b = 0;
+                            }
+                            else
+                            {
+                                b -= slotStack[k];
+                                slotStack[k] = 0;
+                                ourInventory[k] = ItemData.itemList[0];
+                            }
+                        }
+                    }
+
+                    for (int l = 0; l < slotsNumber; l++)
+                    {
+                        if (ourInventory[l].id == ItemData.itemList[craftableItemID].n3 && c > 0)
+                        {
+                            if (slotStack[l] > c)
+                            {
+                                slotStack[l] -= c;
+                                c = 0;
+                            }
+                            else
+                            {
+                                c -= slotStack[l];
+                                slotStack[l] = 0;
+                                ourInventory[l] = ItemData.itemList[0];
+                            }
+                        }
+                    }
+
+                    craft = false;
+
+                }
+            }
+
+
+            for (int i = 0; i < slotsNumber; i++)
+            {
+                if (ourInventory[i].id == 0 && craft == true)
+                {
+                    ourInventory[i] = ItemData.itemList[craftableItemID];
+
+                    slotStack[i] += 1;
+
+                    for (int j = 0; j < slotsNumber; j++)
+                    {
+                        if (ourInventory[j].id == ItemData.itemList[craftableItemID].n1 && a > 0)
+                        {
+                            if (slotStack[j] > a)
+                            {
+                                slotStack[j] -= a;
+                                a = 0;
+                            }
+                            else
+                            {
+                                a -= slotStack[j];
+                                slotStack[j] = 0;
+                                ourInventory[j] = ItemData.itemList[0];
+                            }
+                        }
+                    }
+
+                    for (int k = 0; k < slotsNumber; k++)
+                    {
+                        if (ourInventory[k].id == ItemData.itemList[craftableItemID].n2 && b > 0)
+                        {
+                            if (slotStack[k] > b)
+                            {
+                                slotStack[k] -= b;
+                                a = 0;
+                            }
+                            else
+                            {
+                                b -= slotStack[k];
+                                slotStack[k] = 0;
+                                ourInventory[k] = ItemData.itemList[0];
+                            }
+                        }
+                    }
+
+                    for (int l = 0; l < slotsNumber; l++)
+                    {
+                        if (ourInventory[l].id == ItemData.itemList[craftableItemID].n3 && c > 0)
+                        {
+                            if (slotStack[l] > c)
+                            {
+                                slotStack[l] -= c;
+                                c = 0;
+                            }
+                            else
+                            {
+                                c -= slotStack[l];
+                                slotStack[l] = 0;
+                                ourInventory[l] = ItemData.itemList[0];
+                            }
+                        }
+                    }
+
+                    craft = false;
+
+                }
+            }
+        }
+
+    }
+
+
+    public void rightClickMenu()
+    {
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (armorNO == 1 && ourInventory[b].description == "Armor")
+            {
+                ContextMenuArmor.GetComponent<RectTransform>().position = new Vector3(mousePos.x + 50f, mousePos.y - 70f, mousePos.z);
+                ContextMenuArmor.SetActive(true);
+                ContextMenuEat.SetActive(false);
+                ContextMenuDrink.SetActive(false);
+                ContextMenuNormal.SetActive(false);
+                ContextMenuUnequip.SetActive(false);
+            }
+            else if (armorNO == 1 && ourInventory[b].description == "Eat")
+            {
+                ContextMenuEat.GetComponent<RectTransform>().position = new Vector3(mousePos.x + 50f, mousePos.y - 70f, mousePos.z);
+                ContextMenuEat.SetActive(true);
+                ContextMenuDrink.SetActive(false);
+                ContextMenuNormal.SetActive(false);
+                ContextMenuArmor.SetActive(false);
+                ContextMenuUnequip.SetActive(false);
+            }
+            else if (armorNO == 1 && ourInventory[b].description == "Drink")
+            {
+                ContextMenuDrink.GetComponent<RectTransform>().position = new Vector3(mousePos.x + 50f, mousePos.y - 70f, mousePos.z);
+                ContextMenuDrink.SetActive(true);
+                ContextMenuEat.SetActive(false);
+                ContextMenuArmor.SetActive(false);
+                ContextMenuNormal.SetActive(false);
+                ContextMenuUnequip.SetActive(false);
+            }
+            else if (armorNO == 1 && ourInventory[b].description == "Normal")
+            {
+                ContextMenuNormal.GetComponent<RectTransform>().position = new Vector3(mousePos.x + 50f, mousePos.y - 25f, mousePos.z);
+                ContextMenuNormal.SetActive(true);
+                ContextMenuDrink.SetActive(false);
+                ContextMenuEat.SetActive(false);
+                ContextMenuArmor.SetActive(false);
+                ContextMenuUnequip.SetActive(false);
+            }
+            else if(isHelmet == true)
+            {
+                ContextMenuUnequip.GetComponent<RectTransform>().position = new Vector3(mousePos.x + 50f, mousePos.y - 25f, mousePos.z);
+                ContextMenuUnequip.SetActive(true);
+                ContextMenuNormal.SetActive(false);
+                ContextMenuDrink.SetActive(false);
+                ContextMenuEat.SetActive(false);
+                ContextMenuArmor.SetActive(false);
+                armorCheck = true;
+            }
+            else if (isChest == true)
+            {
+                ContextMenuUnequip.GetComponent<RectTransform>().position = new Vector3(mousePos.x + 50f, mousePos.y - 25f, mousePos.z);
+                ContextMenuUnequip.SetActive(true);
+                ContextMenuNormal.SetActive(false);
+                ContextMenuDrink.SetActive(false);
+                ContextMenuEat.SetActive(false);
+                ContextMenuArmor.SetActive(false);
+                armorCheck = true;
+            }
+            else if (isPant == true)
+            {
+                ContextMenuUnequip.GetComponent<RectTransform>().position = new Vector3(mousePos.x + 50f, mousePos.y - 25f, mousePos.z);
+                ContextMenuUnequip.SetActive(true);
+                ContextMenuNormal.SetActive(false);
+                ContextMenuDrink.SetActive(false);
+                ContextMenuEat.SetActive(false);
+                ContextMenuArmor.SetActive(false);
+                armorCheck = true;
+            }
+            else if (isBoots == true)
+            {
+                ContextMenuUnequip.GetComponent<RectTransform>().position = new Vector3(mousePos.x + 50f, mousePos.y - 25f, mousePos.z);
+                ContextMenuUnequip.SetActive(true);
+                ContextMenuNormal.SetActive(false);
+                ContextMenuDrink.SetActive(false);
+                ContextMenuEat.SetActive(false);
+                ContextMenuArmor.SetActive(false);
+                armorCheck = true;
+            }
+            else
+            {
+                ContextMenuUnequip.SetActive(false);
+                ContextMenuNormal.SetActive(false);
+                ContextMenuDrink.SetActive(false);
+                ContextMenuEat.SetActive(false);
+                ContextMenuArmor.SetActive(false);
+                armorCheck = false;
+            }
+
+
+        }
+    
+    }
+
+    public void takeArmor()
+    {
+        if(ourInventory[b].armorType == "helmet")
+        {
+            if(ourInventory[b].name == "Bear Helmet")
+            {
+                HSript.maxHealth += 7f;
+                Debug.Log("max hp" + deneme12);
+            }
+            else if(ourInventory[b].name == "Boar Helmet")
+            {
+                HSript.maxHealth += 5f;
+            }
+            else if (ourInventory[b].name == "Deer Helmet")
+            {
+                HSript.maxHealth += 2f;
+            }
+            else if (ourInventory[b].name == "Wolf Helmet")
+            {
+                HSript.maxHealth += 5f;
+            }
+
+            HelmetSlot.sprite = ourInventory[b].itemSprite;
+            ourInventory[b] = ItemData.itemList[0];
+            slotStack[b] = 0;
+
+        }
+        if (ourInventory[b].armorType == "chest")
+        {
+            if (ourInventory[b].name == "Bear Chest")
+            {
+                deneme12 += 18f;
+                Debug.Log("max hp" + deneme12);
+            }
+            else if (ourInventory[b].name == "Boar Chest")
+            {
+                HSript.maxHealth += 6f;
+            }
+            else if (ourInventory[b].name == "Deer Chest")
+            {
+                HSript.maxHealth += 3f;
+            }
+            else if (ourInventory[b].name == "Wolf Chest")
+            {
+                HSript.maxHealth += 6f;
+            }
+
+            ChestSlot.sprite = ourInventory[b].itemSprite;
+            ourInventory[b] = ItemData.itemList[0];
+            slotStack[b] = 0;
+        }
+        if (ourInventory[b].armorType == "pant")
+        {
+            if (ourInventory[b].name == "Bear Pant")
+            {
+                deneme12 += 18f;
+                Debug.Log("max hp" + deneme12);
+            }
+            else if (ourInventory[b].name == "Boar Pant")
+            {
+                HSript.maxHealth += 6f;
+            }
+            else if (ourInventory[b].name == "Deer Pant")
+            {
+                HSript.maxHealth += 3f;
+            }
+            else if (ourInventory[b].name == "Wolf Pant")
+            {
+                HSript.maxHealth += 6f;
+            }
+
+            PantSlot.sprite = ourInventory[b].itemSprite;
+            ourInventory[b] = ItemData.itemList[0];
+            slotStack[b] = 0;
+        }
+        if (ourInventory[b].armorType == "boots")
+        {
+            if (ourInventory[b].name == "Bear Boots")
+            {
+                deneme12 += 7f;
+                Debug.Log("max hp" + deneme12);
+            }
+            else if (ourInventory[b].name == "Boar Boots")
+            {
+                HSript.maxHealth += 5f;
+            }
+            else if (ourInventory[b].name == "Deer Boots")
+            {
+                HSript.maxHealth += 2f;
+            }
+            else if (ourInventory[b].name == "Wolf Boots")
+            {
+                HSript.maxHealth += 5f;
+            }
+
+            BootsSlot.sprite = ourInventory[b].itemSprite;
+            ourInventory[b] = ItemData.itemList[0];
+            slotStack[b] = 0;
+        }
+        ContextMenuArmor.SetActive(false);
+    }
+
+
+
+    public void unEquip()
+    {
+        if(holdArmorNo == 1)
+        {
+            Debug.Log(HelmetSlot.sprite.name);
+            for(int i=0; i<slotsNumber; i++)
+            {
+                if(ourInventory[i].id == 0 && armorCheck == true)
+                {
+                    if (HelmetSlot.sprite.name == "24")
+                    {
+                        HSript.maxHealth -= 7f;
+                        Debug.Log("max hp" + deneme12);
+                    }
+                    else if (HelmetSlot.sprite.name == "Boar Helmet")
+                    {
+                        HSript.maxHealth += 5f;
+                    }
+                    else if (HelmetSlot.sprite.name == "Deer Helmet")
+                    {
+                        HSript.maxHealth += 2f;
+                    }
+                    else if (HelmetSlot.sprite.name == "Wolf Helmet")
+                    {
+                        HSript.maxHealth += 5f;
+                    }
+
+                    ourInventory[i] = ItemData.itemList[int.Parse(HelmetSlot.sprite.name)];
+                    slotStack[i] = 1;
+                    stackText[i].enabled = true;
+                    armorCheck = false;
+                    ContextMenuUnequip.SetActive(false);
+                }
+                else if(ourInventory[i].id != 0)
+                {
+                    continue;
+                }
+            }
+
+            HelmetSlot.sprite = null;
+        }
+        if (holdArmorNo == 2)
+        {
+            Debug.Log(ChestSlot.sprite.name);
+            for (int i = 0; i < slotsNumber; i++)
+            {
+                if (ourInventory[i].id == 0 && armorCheck == true)
+                {
+                    if (HelmetSlot.sprite.name == "19")
+                    {
+                        HSript.maxHealth -= 7f;
+                        
+                    }
+                    else if (HelmetSlot.sprite.name == "Boar Helmet")
+                    {
+                        HSript.maxHealth += 5f;
+                    }
+                    else if (HelmetSlot.sprite.name == "Deer Helmet")
+                    {
+                        HSript.maxHealth += 2f;
+                    }
+                    else if (HelmetSlot.sprite.name == "Wolf Helmet")
+                    {
+                        HSript.maxHealth += 5f;
+                    }
+
+                    ourInventory[i] = ItemData.itemList[int.Parse(ChestSlot.sprite.name)];
+                    slotStack[i] = 1;
+                    stackText[i].enabled = true;
+                    armorCheck = false;
+                    ContextMenuUnequip.SetActive(false);
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            ChestSlot.sprite = null;
+        }
+        if (holdArmorNo == 3)
+        {
+            Debug.Log(PantSlot.sprite.name);
+            for (int i = 0; i < slotsNumber; i++)
+            {
+                if (ourInventory[i].id == 0 && armorCheck == true)
+                {
+                    if (HelmetSlot.sprite.name == "19")
+                    {
+                        HSript.maxHealth -= 7f;
+                    }
+                    else if (HelmetSlot.sprite.name == "Boar Helmet")
+                    {
+                        HSript.maxHealth += 5f;
+                    }
+                    else if (HelmetSlot.sprite.name == "Deer Helmet")
+                    {
+                        HSript.maxHealth += 2f;
+                    }
+                    else if (HelmetSlot.sprite.name == "Wolf Helmet")
+                    {
+                        HSript.maxHealth += 5f;
+                    }
+
+                    ourInventory[i] = ItemData.itemList[int.Parse(PantSlot.sprite.name)];
+                    slotStack[i] = 1;
+                    stackText[i].enabled = true;
+                    armorCheck = false;
+                    ContextMenuUnequip.SetActive(false);
+
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            PantSlot.sprite = null;
+        }
+        if (holdArmorNo == 4)
+        {
+            Debug.Log(BootsSlot.sprite.name);
+            for (int i = 0; i < slotsNumber; i++)
+            {
+                if (ourInventory[i].id == 0 && armorCheck == true)
+                {
+                    if (HelmetSlot.sprite.name == "19")
+                    {
+                        HSript.maxHealth -= 7f;
+                    }
+                    else if (HelmetSlot.sprite.name == "Boar Helmet")
+                    {
+                        HSript.maxHealth += 5f;
+                    }
+                    else if (HelmetSlot.sprite.name == "Deer Helmet")
+                    {
+                        HSript.maxHealth += 2f;
+                    }
+                    else if (HelmetSlot.sprite.name == "Wolf Helmet")
+                    {
+                        HSript.maxHealth += 5f;
+                    }
+
+                    ourInventory[i] = ItemData.itemList[int.Parse(BootsSlot.sprite.name)];
+                    slotStack[i] = 1;
+                    stackText[i].enabled = true;
+                    armorCheck = false;
+                    ContextMenuUnequip.SetActive(false);
+                }
+                else
+                {
+                    continue;
+                }
+            }
+            BootsSlot.sprite = null;
+        }
+    }
+
+    public void Drop()
+    {
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            
+            Instantiate(Deneme, denemeCube.position, Quaternion.identity);
+        }
+
+    }
+
+    public void EatItem()
+    {
+        if (canConsume == true && HSript.playerHealth != 100)
+        {
+            if (slotStack[b] == 1)
+            {
+                HSript.Heal(ourInventory[b].nutritionalValue);
+                ourInventory[b] = ItemData.itemList[0];
+                slotStack[b] = 0;
+            }
+            else
+            {
+                slotStack[b]--;
+                HSript.Heal(ourInventory[b].nutritionalValue);
+            }
+           
+            ContextMenuEat.SetActive(false);
+        }
+        
+    }
+
+    public void DrinkWater()
+    {
+        if(canConsume == true && thirstSystem.thirstSystemScript.currentThirst != 100)
+        {
+            if(slotStack[b] == 1)
+            {
+                thirstSystem.thirstSystemScript.increaseThirst(ourInventory[b].nutritionalValue);
+                ourInventory[b] = ItemData.itemList[0];
+                slotStack[b] = 0;
+            }
+            else
+            {
+                slotStack[b]--;
+                thirstSystem.thirstSystemScript.increaseThirst(ourInventory[b].nutritionalValue);
+            }
+            ContextMenuDrink.SetActive(false);
+        }
+    }
+
+    public void BuildItem()
+    {
+        if(hammerOpen == true && buildMenuOpen == false)
+        {
+            
+            buildUI.SetActive(true);
+            Instantiate(buildItemsPreview[BuildId]);
+            buildMenuOpen = true;
+        }
+        else if(hammerOpen == false)
+        {
+            buildUI.SetActive(false);
+            buildSlots[0].GetComponent<RectTransform>().localScale = new Vector3(0.8f, 0.8f, 1);
+            buildSlots[1].GetComponent<RectTransform>().localScale = new Vector3(0.7f, 0.7f, 1);
+            buildSlots[2].GetComponent<RectTransform>().localScale = new Vector3(0.7f, 0.7f, 1);
+            buildSlots[3].GetComponent<RectTransform>().localScale = new Vector3(0.7f, 0.7f, 1);
+            BuildId = 0;
+            buildMenuOpen = false;
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.E) && buildMenuOpen == true)
+        {
+            if(BuildId < 3)
+            {
+                BuildId++;
+                buildSlots[BuildId].GetComponent<RectTransform>().localScale = new Vector3(0.8f, 0.8f, 1);
+                buildSlots[BuildId - 1].GetComponent<RectTransform>().localScale = new Vector3(0.7f, 0.7f, 1);          
+                BuildingItem.BuildingI.BuildDeath();
+                Instantiate(buildItemsPreview[BuildId]);
+                
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q) && buildMenuOpen == true)
+        {
+            if(BuildId > 0)
+            {
+                BuildId--;
+                buildSlots[BuildId].GetComponent<RectTransform>().localScale = new Vector3(0.8f, 0.8f, 1);
+                buildSlots[BuildId + 1].GetComponent<RectTransform>().localScale = new Vector3(0.7f, 0.7f, 1);
+                BuildingItem.BuildingI.BuildDeath();
+                Instantiate(buildItemsPreview[BuildId]);
+
+            }
+        }
+
+
+
+
+    }
+
+
+
+
+
+
+
+
 
 
 

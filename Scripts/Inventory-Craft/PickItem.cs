@@ -42,7 +42,7 @@ public class PickItem : MonoBehaviour
 
 
             //if press E take item and destroy
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(KeyCode.E) && Inventory.inv.hammerOpen == false)
             {
                 Destroy(Item);
                 Item = null;
