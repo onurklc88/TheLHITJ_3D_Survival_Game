@@ -9,7 +9,7 @@ public class HealthScript : MonoBehaviour
    
     
    [HideInInspector] public float playerHealth;
-   [HideInInspector] public float maxHealth = 100f;
+    public float maxHealth = 100f;
     public float currentHealth;
     public bool damageTaken;
     public Image bloodImage;
@@ -48,12 +48,15 @@ public class HealthScript : MonoBehaviour
         takeDamageKnock();
         knockBackController();
         UpdateBloodImage();
-
+        
 
 
     }
    
-
+    /*public void increaseArmor(float amount2)
+    {
+        if()
+    }*/
     public void takeDamage(float amount)
     {
        
@@ -83,6 +86,7 @@ public class HealthScript : MonoBehaviour
 
             damageTaken = true;
         }
+
         
     }
 
@@ -123,9 +127,12 @@ public class HealthScript : MonoBehaviour
     public void UpdateBloodImage()
     {
 
-      
+      if(damageTaken == true)
+        {
             healthPercent = (maxHealth - playerHealth) / 100;
             bloodImage.color = new Color(255, 0, 0, healthPercent);
+        }
+          
             
         }
 
@@ -133,7 +140,7 @@ public class HealthScript : MonoBehaviour
     {
 
 
-        if (playerHealth < 100)
+        if (playerHealth < maxHealth)
         {
 
             currentHealth = playerHealth;

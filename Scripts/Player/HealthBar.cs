@@ -22,7 +22,7 @@ public class HealthBar : MonoBehaviour
     private void Update()
     {
 
-        healthText.text = "" + HSript.playerHealth;
+        healthText.text = "" + HSript.playerHealth + "/" + HSript.maxHealth;
         if (HSript.playerHealth > HSript.maxHealth) HSript.playerHealth = HSript.maxHealth;
 
         lerpSpeed = 3f * Time.deltaTime;
