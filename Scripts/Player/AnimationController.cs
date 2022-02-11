@@ -9,19 +9,23 @@ public class AnimationController : MonoBehaviour
     private Animator playerAnim;
     private PlayerMovement playerSpeed;
     private Gun gunScript;
-    private Gun shotgun;
+    private shotgunScript shotgunScript;
     private bool IsAxeTaken;
     private bool chopping;
     private bool IsPistolTaken;
     private bool pistolShooting;
-
+    private bool IsShotgunTaken;
+   
 
 
     public GameObject player;
     public GameObject revolver;
     public GameObject axe;
+    public GameObject shotgun;
+
+    public GameObject shotgunScript1;
     public GameObject pistolScript;
-    public GameObject shotgunScript;
+    
 
 
 
@@ -33,7 +37,7 @@ public class AnimationController : MonoBehaviour
         playerSpeed = player.GetComponent<PlayerMovement>();
         playerAnim = GetComponent<Animator>();
         gunScript = pistolScript.GetComponent<Gun>();
-        //shotgun = shotgunScript.GetComponent<Gun>();
+        shotgunScript = shotgunScript1.GetComponent<shotgunScript>();
 
     }
     
@@ -97,25 +101,21 @@ public class AnimationController : MonoBehaviour
 
         //axeAnimation
         //if axe taken and
-        if (IsAxeTaken == false && Input.GetKeyDown(KeyCode.Alpha1))
+        if (Inventory.inv.axeOpen == true)
         {
-
-
             axe.SetActive(true);
             playerAnim.SetBool("axeTaken", true);
-            playerAnim.SetBool("pistolTaken", false);
-           
-                IsAxeTaken = true;
+            playerAnim.SetBool("pistolTaken", false);         
 
         }
-        else if(IsAxeTaken == true && Input.GetKeyDown(KeyCode.Alpha1) )
+        else if(Inventory.inv.axeOpen == false)
         {
 
             playerAnim.SetBool("axeTaken", false);
             IsAxeTaken = false;
             axe.SetActive(false);
         }
-        if (IsAxeTaken == true && Input.GetKeyDown(KeyCode.Alpha2))
+        /*if (IsAxeTaken == true && Input.GetKeyDown(KeyCode.Alpha2))
         
         {
             IsAxeTaken = false;
@@ -123,12 +123,12 @@ public class AnimationController : MonoBehaviour
             playerAnim.SetBool("axeTaken", false);
             playerAnim.SetBool("pistolTaken", true);
             revolver.SetActive(true);
-        }
+        }*/
 
 
 
-
-        if (Input.GetMouseButtonDown(0) && IsAxeTaken == true)
+        /*
+        if (Input.GetMouseButtonDown(0) && Inventory.inv.axeOpen == true)
         {
        
           
@@ -136,11 +136,11 @@ public class AnimationController : MonoBehaviour
             chopping = true;
             
         }
-
+        */
         //pistol animation
         
         //if pistol taken 
-      if (IsPistolTaken == false && Input.GetKeyDown(KeyCode.Alpha2))
+      if (Inventory.inv.revolverOpen == true)
           {
             revolver.SetActive(true);
             playerAnim.SetBool("axeTaken", false);
@@ -148,7 +148,7 @@ public class AnimationController : MonoBehaviour
             IsPistolTaken = true;
 
         }
-        else if (IsPistolTaken == true && Input.GetKeyDown(KeyCode.Alpha2))
+        else if (Inventory.inv.revolverOpen == false)
         {
             
             revolver.SetActive(false);
@@ -158,7 +158,7 @@ public class AnimationController : MonoBehaviour
             IsPistolTaken = false;
          
         }
-        if (IsAxeTaken == true && Input.GetKeyDown(KeyCode.Alpha1))
+        /*if (IsAxeTaken == true && Input.GetKeyDown(KeyCode.Alpha1))
         {
             
             IsPistolTaken = false;
@@ -170,9 +170,9 @@ public class AnimationController : MonoBehaviour
            
             axe.SetActive(true);
             
-        }
+        }*/
 
-        if (Input.GetMouseButtonDown(0) && IsPistolTaken == true)
+        if (Input.GetMouseButtonDown(0) && Inventory.inv.revolverOpen == true)
         {
 
 
@@ -181,10 +181,28 @@ public class AnimationController : MonoBehaviour
 
         }
 
+        if (Inventory.inv.shotgunOpen == true)
+        {
+            shotgun.SetActive(true);
+            playerAnim.SetBool("axeTaken", false);
+            playerAnim.SetBool("pistolTaken", false);
+            playerAnim.SetBool("shotgunTaken", true);
+            IsShotgunTaken = true;
+
+        }
+        else if (Inventory.inv.shotgunOpen == false)
+        {
+            shotgun.SetActive(false);
+            shotgunScript.canShoot = true;
+            
+            playerAnim.SetBool("shotgunTaken", false);
+            playerAnim.SetBool("shotgunReload", false);
+            IsShotgunTaken = true;
+
+        }
 
 
-
-
+    
     }
 
  

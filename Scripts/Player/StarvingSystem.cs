@@ -22,12 +22,12 @@ public class StarvingSystem : MonoBehaviour
 
     private void Awake()
     {
-
+        starvingSystem = this;
     }
     private void Start()
     {
         HSript = player.GetComponent<HealthScript>();
-        currentHunger = maxHunger;
+        currentHunger = 50f;
      
 
     }

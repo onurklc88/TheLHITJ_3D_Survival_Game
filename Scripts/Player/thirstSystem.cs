@@ -19,14 +19,15 @@ public class thirstSystem : MonoBehaviour
     public static thirstSystem thirstSystemScript;
 
 
+
     private void Awake()
     {
-
+        thirstSystemScript = this;
     }
     private void Start()
     {
         HSript = player.GetComponent<HealthScript>();
-        currentThirst = maxThirst;
+        currentThirst = 50f;
 
 
     }
@@ -42,7 +43,7 @@ public class thirstSystem : MonoBehaviour
         StarveBarFiller();
         ColorChanger();
         damageToPlayer();
-        decreaseHunger();
+        decreaseThirst();
 
     }
 
@@ -65,7 +66,7 @@ public class thirstSystem : MonoBehaviour
 
 
 
-    public void decreaseHunger()
+    public void decreaseThirst()
     {
         if (thirstTimer > 0)
         {
@@ -79,12 +80,12 @@ public class thirstSystem : MonoBehaviour
         }
 
     }
-    public void increase(float increaseHunger)
+    public void increaseThirst(float increaseT)
     {
         if (currentThirst < maxThirst)
-            currentThirst += increaseHunger;
+            currentThirst += increaseT;
     }
-
+    
 
     public void damageToPlayer()
     {

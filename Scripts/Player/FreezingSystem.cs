@@ -78,15 +78,8 @@ public class FreezingSystem : MonoBehaviour
     {
         if (currentDegree > 0)
         {
-            if(WoodHouseScript.InCeilingRange.houseInSightRange == false)
-            {
-                Debug.Log("asd");
-                currentDegree -= decreaseD;
-            }
-           
-           
-           
 
+          currentDegree -= decreaseD;
         }
          
     }

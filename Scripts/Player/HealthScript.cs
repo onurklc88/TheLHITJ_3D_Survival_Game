@@ -15,8 +15,9 @@ public class HealthScript : MonoBehaviour
     public Image bloodImage;
     public PlayerMovement movementScript;
     public float healthPercent;
+    public GameObject GOScreen;
     public Transform[] Animal;
-    
+   
     
     public bool bearInsightRange, boarInsightRange, wolfInsightRange;
 
@@ -53,10 +54,7 @@ public class HealthScript : MonoBehaviour
 
     }
    
-    /*public void increaseArmor(float amount2)
-    {
-        if()
-    }*/
+   
     public void takeDamage(float amount)
     {
        
@@ -64,15 +62,19 @@ public class HealthScript : MonoBehaviour
 
             currentHealth = playerHealth;
             playerHealth -= amount;
-          
             
 
-        }
-        else
-        {
 
-            Debug.Log("player is dead");
         }
+        else if(playerHealth <= 0)
+        {
+            Time.timeScale = 0f;
+          GOScreen.SetActive(true);
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+    
+        }
+        
       
 
     }
@@ -195,7 +197,7 @@ public class HealthScript : MonoBehaviour
 
         if (bearInsightRange == true)
         {
-            Debug.Log("bear za");
+         
             Vector3 animalPosition = new Vector3(Animal[0].transform.position.x, Animal[0].transform.position.y, Animal[0].transform.position.z);
             animal_x = animalPosition.x;
             animal_z = animalPosition.z;
@@ -204,7 +206,7 @@ public class HealthScript : MonoBehaviour
         }
         else if (boarInsightRange == true)
         {
-            Debug.Log("boar");
+          
             Vector3 animalPosition = new Vector3(Animal[1].transform.position.x, Animal[1].transform.position.y, Animal[1].transform.position.z);
             animal_x = animalPosition.x;
             animal_z = animalPosition.z;
@@ -212,7 +214,7 @@ public class HealthScript : MonoBehaviour
         }
         else if (wolfInsightRange == true)
         {
-            Debug.Log("wolf");
+            
             Vector3 animalPosition = new Vector3(Animal[2].transform.position.x, Animal[2].transform.position.y, Animal[2].transform.position.z);
             animal_x = animalPosition.x;
             animal_z = animalPosition.z;

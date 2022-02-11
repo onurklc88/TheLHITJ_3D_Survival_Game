@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class StaminaBar : MonoBehaviour
 {
-    
- 
-    private float maxStamina = 100;
+
+
+    public float maxStamina = 200;
     private WaitForSeconds regenTick = new WaitForSeconds(0.1f);
     private Coroutine regen;
 
@@ -16,6 +16,7 @@ public class StaminaBar : MonoBehaviour
     [HideInInspector] public float currentStamina;
     public static StaminaBar instance;
     public bool extraStamina;
+
 
 
     private void Awake()

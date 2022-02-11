@@ -8,9 +8,14 @@ public class PlayerMovement : MonoBehaviour
 
     //               *************PRIVATE**************
 
+
+    //quest
+    public static bool quest6;
+    public static bool quest4;
+    public static bool quest10;
     //Vectors
     private Vector3 velocity;
-
+    private Vector3 moveDirection;
     //bool
     private bool isGrounded;
     private bool isCrouching;
@@ -22,6 +27,12 @@ public class PlayerMovement : MonoBehaviour
     public GameObject shotgunScript;
     private shotgunScript asd;
     private Gun gunsScript;
+    
+
+    //knockback when get hit
+    public float knockBackForce;
+    public float knockBackTime;
+    private float knockBackCounter;
 
     //float
     private float distance = 0.4f;   
@@ -67,8 +78,9 @@ public class PlayerMovement : MonoBehaviour
     {
 
         //is player touch the ground
-        isGrounded = Physics.CheckSphere(ground.position, distance, mask);
-        
+        //isGrounded = Physics.CheckSphere(ground.position, distance, mask);
+        RaycastHit hit;
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, 1.2f);
 
 
         //Functions
@@ -78,7 +90,9 @@ public class PlayerMovement : MonoBehaviour
         Crouch();
         Run();
         crouchUpRaycast();
-     
+        
+
+
 
     }
 
@@ -87,16 +101,26 @@ public class PlayerMovement : MonoBehaviour
 
     private void Movement()
     {
+
+        if(knockBackCounter <= 0)
+        {
+
+        
         //Player Movement Input
         hori = Input.GetAxis("Horizontal");
         vert = Input.GetAxis("Vertical");
 
         //Player Move
-        Vector3 move = transform.right * hori + transform.forward * vert;
-        controller.Move(move * speed * Time.deltaTime);
-       
+         moveDirection = transform.right * hori + transform.forward * vert;
+        controller.Move(moveDirection * speed * Time.deltaTime);
 
-    }
+       }
+        else
+        {
+
+            knockBackCounter -= Time.deltaTime;
+        }
+}
 
     private void Jump()
     {
@@ -166,7 +190,21 @@ public class PlayerMovement : MonoBehaviour
             //asd.magazineSize = asd.maxAmmo + asd.magazineSize;
             Debug.Log("ammo güncellendi");
             
-         
+        }
+
+        if(other.gameObject.tag == "UncleHouse")
+        {
+            quest6 = true;
+        }
+
+        if (other.gameObject.tag == "waterfield")
+        {
+            quest4 = true;
+        }
+
+        if(other.gameObject.tag == "Treasure")
+        {
+            quest10 = true;
         }
     }
 
@@ -226,5 +264,17 @@ public class PlayerMovement : MonoBehaviour
     }
 
    
+    public void KnockBack(Vector3 direction)
+    {
+        knockBackCounter = knockBackTime;
+        moveDirection = direction * knockBackForce;
+        
+       
+    }
 
+    /*public bool isGrounded()
+    {
+        RaycastHit hit;
+        Physics.Raycast(transform.position, Vector3.down, out hit, 1.2f);
+    }*/
 }
