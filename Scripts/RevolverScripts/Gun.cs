@@ -6,12 +6,16 @@ using TMPro;
 public class Gun : MonoBehaviour
 {
     public float damage = 20f;
-    public float range = 100f;
+    public float range = 70f;
     public float reloadTime = 60f;
-    public int maxAmmo = 2;
+    public int maxAmmo = 6;
     public int magazineSize = 12;
+    public static bool pistolFire;
+    public static bool revoReload;
 
-   
+
+
+
     public Camera fpsCam;
     public ParticleSystem muzzleFlash;
     public GameObject impactEfectAnimal;
@@ -22,6 +26,7 @@ public class Gun : MonoBehaviour
     [HideInInspector]public bool canShoot = true;
     [HideInInspector]public int currentAmmo;
     [HideInInspector]public bool looting = false;
+    [HideInInspector] public int currentMagazineAmmo;
     private bool manuelReload = false;
     private bool isReloading = false;
     private int bulletRemainder;
@@ -30,18 +35,48 @@ public class Gun : MonoBehaviour
 
     private void Start()
     {
+
         pistolAnim = player.GetComponent<Animator>();
-        currentAmmo = maxAmmo;
+        currentAmmo = 0;
+       
     }
 
   
 
     void Update()
     {
+       
+
         inputManager();
         pistolReload();
         ammoLooting();
-        ammoInfoText.text = this.currentAmmo + " / " + this.magazineSize;
+
+
+
+
+
+
+        currentMagazineAmmo = Inventory.inv.revoBulletCount;
+
+        /*if (currentMagazineAmmo <= 6)
+        {
+            currentAmmo = Inventory.inv.revoBulletCount;
+            currentMagazineAmmo = 0;
+            ammoInfoText.text = this.currentAmmo + " / 0";
+        }
+        else if (Inventory.inv.revoBulletCount > 6 && Inventory.inv.revoBulletCount <= 12)
+        {
+            currentAmmo = 6;
+            currentMagazineAmmo = Inventory.inv.revoBulletCount % 6;
+            //currentAmmo = Inventory.inv.revoBulletCount - currentMagazineAmmo;
+        }
+        else if(Inventory.inv.revoBulletCount > 12)
+        {
+            currentAmmo = 6;
+            currentMagazineAmmo = Inventory.inv.revoBulletCount - (Inventory.inv.revoBulletCount % 6 + 6) ;
+        }*/
+        //ammoInfoText.text = this.currentAmmo + " / " + this.currentMagazineAmmo;
+        ammoInfoText.text = Inventory.inv.revoAmmo + " / " + currentMagazineAmmo;
     }
 
 
@@ -69,8 +104,9 @@ public class Gun : MonoBehaviour
         //Manuel reload Input
         if (Input.GetKeyDown(KeyCode.R))
         {
-            
-            manuelReload = true;
+            revoReload = true;    
+
+            /*manuelReload = true;
 
             if (manuelReload == true)
             {
@@ -100,16 +136,9 @@ public class Gun : MonoBehaviour
                     StartCoroutine(Reload());
                     return;
 
-                }
-            
-
-            }
-          
-
-        }
-
-
-     
+                }          
+            } */
+        }  
     }
 
     
@@ -124,8 +153,8 @@ public void Shoot()
 
             if (currentAmmo > 0)
         {
-            currentAmmo--;
 
+            pistolFire = true;
             muzzleFlash.Play();
             //define raycast
             RaycastHit hit;
@@ -178,7 +207,7 @@ public void Shoot()
         {
             canShoot = false;
             pistolAnim.SetBool("pistolReload", false);
-           return;
+            return;
 
         }
         
