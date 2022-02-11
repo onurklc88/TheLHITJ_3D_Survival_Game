@@ -27,6 +27,7 @@ public class AIAttack : MonoBehaviour
    //Attack
     public float timeBetweenAttacks;
     public bool alreadyAttacked;
+    
     public float hitRange = 4f;
     public float damage;
   
@@ -84,6 +85,7 @@ public class AIAttack : MonoBehaviour
         playerInsightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         PlayerInAttcakRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
         animalPointOfView = Physics.CheckSphere(pointOfView.transform.position, viewRange, whatIsPlayer);
+
         AIStates();
         Dead();
         updateAnimation();
@@ -263,7 +265,7 @@ public class AIAttack : MonoBehaviour
     {
         animation.SetBool("attack", true);
         animation.SetBool("chase", false);
-        agent.SetDestination(player.position);
+       
         AIFace.LookAt(player.position);
 
         if (!alreadyAttacked)
@@ -276,17 +278,18 @@ public class AIAttack : MonoBehaviour
             {
 
                 Debug.Log(raycastHit.transform.name);
-             
+               
 
             }
            
             HealthScript player = raycastHit.transform.GetComponent<HealthScript>();
-
-            if(player != null)
+            
+            if (player != null)
             {
-               
+
                
                 player.takeDamage(damage);
+                player.UpdateBloodImage();
                 
             }
             else

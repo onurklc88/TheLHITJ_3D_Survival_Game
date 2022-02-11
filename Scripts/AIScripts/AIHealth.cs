@@ -6,7 +6,7 @@ public class AIHealth : MonoBehaviour
 {
 
     public float AIHealth1;
-    public float AxeDamage = 0;
+   
     private float counter = 0.1f;
     private float deadcounter = 0.1f;
 

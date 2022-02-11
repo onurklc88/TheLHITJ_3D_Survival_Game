@@ -86,8 +86,8 @@ public class AIController : MonoBehaviour
         {
 
             //giving random x and z axis between spawn point
-            xPos = Random.Range(spawnPosition2.transform.position.x, spawnPosition.transform.position.x + 30f);
-            zPos = Random.Range(spawnPosition2.transform.position.z, spawnPosition.transform.position.z + 60f);
+            xPos = Random.Range(spawnPosition2.transform.position.x, spawnPosition.transform.position.x + 15f);
+            zPos = Random.Range(spawnPosition2.transform.position.z, spawnPosition.transform.position.z + 30f);
             //Instantiate AI
             Instantiate(bear, new Vector3(xPos, spawnPosition2.transform.position.y, zPos), Quaternion.identity);
             
@@ -100,8 +100,8 @@ public class AIController : MonoBehaviour
         {
 
             //giving random x and z axis between spawn point
-            xPos = Random.Range(spawnPosition2.transform.position.x, spawnPosition.transform.position.x + 30f);
-            zPos = Random.Range(spawnPosition2.transform.position.z, spawnPosition.transform.position.z + 60f);
+            xPos = Random.Range(spawnPosition2.transform.position.x, spawnPosition.transform.position.x + 15f);
+            zPos = Random.Range(spawnPosition2.transform.position.z, spawnPosition.transform.position.z + 30f);
             //Instantiate AI
             Instantiate(wolf, new Vector3(xPos, spawnPosition2.transform.position.y, zPos), Quaternion.identity);
            
@@ -113,8 +113,8 @@ public class AIController : MonoBehaviour
         {
 
             //giving random x and z axis between spawn point
-            xPos = Random.Range(spawnPosition2.transform.position.x, spawnPosition.transform.position.x + 30f);
-            zPos = Random.Range(spawnPosition2.transform.position.z, spawnPosition.transform.position.z + 60f);
+            xPos = Random.Range(spawnPosition2.transform.position.x, spawnPosition.transform.position.x + 15f);
+            zPos = Random.Range(spawnPosition2.transform.position.z, spawnPosition.transform.position.z + 30f);
             //Instantiate AI
             Instantiate(boar, new Vector3(xPos, spawnPosition2.transform.position.y, zPos), Quaternion.identity);
             
