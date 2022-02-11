@@ -4,16 +4,24 @@ using UnityEngine;
 
 public class campfire : MonoBehaviour
 {
+
    
+
+
     void Start()
     {
-        
+
+      
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
+        //destroy campfire after 10 min
+        Destroy(this.gameObject, 600f);
+
     }
     private void OnTriggerStay(Collider other)
     {

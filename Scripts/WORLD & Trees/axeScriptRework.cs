@@ -70,6 +70,7 @@ public class axeScriptRework : MonoBehaviour
             StartCoroutine(woodEffect());
 
         }
+      
 
         //fetching AIhealth script
         AIHealth AIHealthScript = hit.transform.GetComponent<AIHealth>();
@@ -77,12 +78,18 @@ public class axeScriptRework : MonoBehaviour
         {
             AIHealthScript.TakeDamage(axeAnimalDamage);
             StartCoroutine(animalEffect());
-
+           
         }
+      
 
+        BarrelScript BarrelScripts = hit.transform.GetComponent<BarrelScript>();
+        if (BarrelScripts != null)
+        {
+            BarrelScripts.TakeDamage1(axeDamage);
 
-
-
+            
+        }
+        
 
 
 

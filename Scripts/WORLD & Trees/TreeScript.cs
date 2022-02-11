@@ -6,9 +6,11 @@ public class TreeScript : MonoBehaviour
 {
     public GameObject thisTree;
     public float treeHealth;
-    public int axeDamage;
+    
     private Rigidbody rb;
     private int counter = 1;
+
+    float timecounter = 5;
 
 
     [SerializeField]
@@ -41,7 +43,10 @@ public class TreeScript : MonoBehaviour
     {
 
         TreeFall();
-       
+        if(timecounter>=0)
+        {
+            timecounter -= Time.deltaTime;
+        }
 
     }
 
@@ -77,22 +82,17 @@ public class TreeScript : MonoBehaviour
 
     }
 
-
-
-    
     private void OnTriggerEnter(Collider health)
     {
-
-
-        if (health.gameObject.tag == "Axe")
+       
+        if (timecounter>0)
         {
-            Debug.Log("touch");
-            //AI taking axe damage
-            treeHealth -= axeDamage;
-
-
+            if (health.gameObject.tag == "rock")
+            {
+                Destroy(thisTree);
+            }
         }
-
+       
     }
     
     public void ItemDrop()

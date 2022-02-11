@@ -5,7 +5,7 @@ using UnityEngine;
 public class WoodHouseScript : MonoBehaviour
 {
     public static WoodHouseScript InCeilingRange;
-    public bool houseInSightRange;
+   [HideInInspector] public bool houseInSightRange;
   
 
     private void Awake()
@@ -17,7 +17,7 @@ public class WoodHouseScript : MonoBehaviour
         houseInSightRange = false;
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
         
@@ -26,6 +26,8 @@ public class WoodHouseScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+
+        //if player enter the building disable freezing 
 
     if(other.gameObject.tag == "Player")
         {
